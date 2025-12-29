@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Company, ReceiptItem } from '../types';
 import CompanySelector from '../components/CompanySelector';
 import PreviewCard from '../components/PreviewCard';
+import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 
 const PaymentReceipt: React.FC = () => {
     const { t } = useLanguage();
+    const { addToast } = useToast();
     const [company, setCompany] = useState<Company | null>(null);
     const [client, setClient] = useState('');
     const [date, setDate] = useState('');
@@ -17,23 +20,33 @@ const PaymentReceipt: React.FC = () => {
     const [desc, setDesc] = useState('');
     const [plan, setPlan] = useState('');
     const [method, setMethod] = useState('Pix');
-    const [val, setVal] = useState('');
+    const [val, setVal] = useState<number | ''>('');
 
     const addItem = () => {
-        if (!desc || !val) return;
+        if (!desc) return addToast('Informe a descrição do item.', 'error');
+        const valueNum = typeof val === 'string' ? parseFloat(val) : val;
+        if (!valueNum || isNaN(valueNum)) return addToast('Informe um valor válido.', 'error');
+        
         setItems([...items, {
             id: Date.now().toString(),
             descricao: desc,
             plano: plan,
             formaPagamento: method,
-            valor: parseFloat(val)
+            valor: valueNum
         }]);
         setDesc(''); setPlan(''); setVal('');
+        addToast('Item adicionado.', 'success');
     };
 
     const handleGenerate = () => {
-        if (!company || !client || items.length === 0) return alert(t('common.preview_hint'));
+        if (!company || !client || items.length === 0) return addToast(t('common.preview_hint'), 'error');
         setShowResult(true);
+        addToast('Recibo gerado!', 'success');
+    };
+
+    const handleClear = () => {
+        setItems([]); setShowResult(false); setClient(''); setObs('');
+        addToast('Tudo limpo.', 'info');
     };
 
     const total = items.reduce((acc, i) => acc + i.valor, 0);
@@ -63,7 +76,12 @@ const PaymentReceipt: React.FC = () => {
                             <option value="Transferência">{t('pag.method_transfer')}</option>
                          </select>
                     </div>
-                    <input className="input-sm" type="number" placeholder={t('pag.val_placeholder')} value={val} onChange={e => setVal(e.target.value)} />
+                    <CurrencyInput 
+                        className="input-sm" 
+                        placeholder={t('pag.val_placeholder')} 
+                        value={val} 
+                        onChange={setVal} 
+                    />
                     <button onClick={addItem} className="w-full bg-brand-dark text-white py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-lg">{t('pag.add_list_btn')}</button>
                 </div>
 
@@ -95,7 +113,7 @@ const PaymentReceipt: React.FC = () => {
                     
                     <div className="flex gap-4 pt-2">
                         <button onClick={handleGenerate} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('pag.generate_btn')}</button>
-                        <button onClick={() => { setItems([]); setShowResult(false); }} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">{t('common.clean')}</button>
+                        <button onClick={handleClear} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">{t('common.clean')}</button>
                     </div>
                 </div>
             </div>

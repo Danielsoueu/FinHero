@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 
-export const downloadElementAsImage = async (elementId: string, fileName: string) => {
+export const downloadElementAsImage = async (elementId: string, fileName: string, onSuccess?: () => void, onError?: () => void) => {
     const element = document.getElementById(elementId);
     if (!element) return;
 
@@ -18,9 +18,10 @@ export const downloadElementAsImage = async (elementId: string, fileName: string
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        if (onSuccess) onSuccess();
     } catch (error) {
         console.error('Error downloading image:', error);
-        alert('Erro ao gerar imagem. Tente novamente.');
+        if (onError) onError();
     }
 };
 
@@ -31,6 +32,7 @@ export const printElement = (elementId: string) => {
     // We open a new window to print cleanly
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
+        // We can't use toast here easily without context, but this is a browser restriction fallback
         alert('Por favor, permita popups para imprimir.');
         return;
     }
@@ -64,15 +66,15 @@ export const printElement = (elementId: string) => {
     printWindow.document.close();
 };
 
-export const copyTextToClipboard = async (elementId: string) => {
+export const copyTextToClipboard = async (elementId: string, onSuccess?: () => void, onError?: () => void) => {
     const element = document.getElementById(elementId);
     if (!element) return;
 
     try {
         await navigator.clipboard.writeText(element.innerText);
-        alert('Texto copiado com sucesso!');
+        if (onSuccess) onSuccess();
     } catch (err) {
         console.error('Failed to copy text: ', err);
-        alert('Falha ao copiar texto.');
+        if (onError) onError();
     }
 };

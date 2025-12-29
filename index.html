@@ -28,6 +28,15 @@
                     boxShadow: {
                         'glow': '0 4px 14px 0 rgba(230, 0, 126, 0.39)',
                         'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                    animation: {
+                        'slide-in': 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { transform: 'translateX(100%)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        }
                     }
                 }
             }

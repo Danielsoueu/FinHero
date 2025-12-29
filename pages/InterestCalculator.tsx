@@ -3,10 +3,13 @@ import { Company, DebtItem } from '../types';
 import { DEFAULT_TAXA_JUROS, DEFAULT_TAXA_MULTA } from '../constants';
 import CompanySelector from '../components/CompanySelector';
 import PreviewCard from '../components/PreviewCard';
+import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 
 const InterestCalculator: React.FC = () => {
     const { t } = useLanguage();
+    const { addToast } = useToast();
     const [company, setCompany] = useState<Company | null>(null);
     const [clientName, setClientName] = useState('');
     const [items, setItems] = useState<DebtItem[]>([]);
@@ -16,16 +19,17 @@ const InterestCalculator: React.FC = () => {
     const [multaRate, setMultaRate] = useState(DEFAULT_TAXA_MULTA);
     const [jurosRate, setJurosRate] = useState(DEFAULT_TAXA_JUROS);
     const [title, setTitle] = useState('');
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState<number | ''>(''); // Changed to support CurrencyInput
     const [dateDue, setDateDue] = useState('');
     const [datePaid, setDatePaid] = useState('');
     const [isPaid, setIsPaid] = useState(false);
     const [discount, setDiscount] = useState('');
 
     const handleAdd = () => {
-        if (!company) return alert(t('common.select_company'));
-        const val = parseFloat(value);
-        if (isNaN(val)) return alert('Valor inválido.');
+        if (!company) return addToast(t('common.select_company'), 'error');
+        
+        const val = typeof value === 'string' ? parseFloat(value) : value;
+        if (!val || isNaN(val)) return addToast('Por favor, informe um valor válido.', 'error');
 
         let status: 'Vencida' | 'Não Vencida' | 'Pago' = "Não Vencida";
         let displayStatus = t('juros.status_ok');
@@ -63,19 +67,22 @@ const InterestCalculator: React.FC = () => {
             total: vTotal,
             devido: vDevido,
             desconto: vDesc,
-            status: displayStatus as any, // Simple hack to store translated status for preview
+            status: displayStatus as any,
             diasAtraso: dias
         }]);
         setTitle(''); setValue('');
+        addToast('Item adicionado à lista!', 'success');
     };
 
     const handleGenerate = () => {
-        if (!company || !clientName || items.length === 0) return alert(t('common.preview_hint'));
+        if (!company || !clientName || items.length === 0) return addToast(t('common.preview_hint'), 'error');
         setShowResult(true);
+        addToast('Resumo gerado com sucesso!', 'success');
     };
 
     const handleClear = () => {
         setItems([]); setShowResult(false); setClientName('');
+        addToast('Campos limpos.', 'info');
     };
 
     const formatCurrency = (val: number) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -113,7 +120,14 @@ const InterestCalculator: React.FC = () => {
                     <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
                         <div className="flex justify-between items-center"><h3 className="text-sm font-bold text-brand-dark uppercase tracking-wide">{t('juros.new_item')}</h3></div>
                         <input className="input-field" placeholder={t('juros.title_placeholder')} value={title} onChange={e => setTitle(e.target.value)} />
-                        <input className="input-field" type="number" placeholder={t('juros.val_placeholder')} value={value} onChange={e => setValue(e.target.value)} />
+                        
+                        {/* Currency Input Usage */}
+                        <CurrencyInput 
+                            className="input-field" 
+                            placeholder={t('juros.val_placeholder')} 
+                            value={value} 
+                            onChange={setValue} 
+                        />
                         
                         <div className="grid grid-cols-2 gap-4">
                             <div><label className="label-field">{t('juros.due_date')}</label><input type="date" className="input-field" value={dateDue} onChange={e => setDateDue(e.target.value)} /></div>

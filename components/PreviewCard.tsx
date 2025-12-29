@@ -1,6 +1,7 @@
 import React from 'react';
 import { downloadElementAsImage, printElement, copyTextToClipboard } from '../services/documentService';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 
 interface PreviewCardProps {
     children: React.ReactNode;
@@ -11,7 +12,25 @@ interface PreviewCardProps {
 
 const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, hasContent }) => {
     const { t } = useLanguage();
+    const { addToast } = useToast();
     const displayTitle = title || t('common.preview');
+
+    const handleCopy = () => {
+        copyTextToClipboard(
+            contentId, 
+            () => addToast('Conteúdo copiado para a área de transferência!', 'success'),
+            () => addToast('Erro ao copiar conteúdo.', 'error')
+        );
+    };
+
+    const handleDownload = () => {
+        downloadElementAsImage(
+            contentId, 
+            'documento-finhero.jpg',
+            () => addToast('Download iniciado!', 'success'),
+            () => addToast('Erro ao gerar imagem.', 'error')
+        );
+    };
 
     return (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 flex flex-col h-full overflow-hidden relative">
@@ -42,7 +61,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, h
             {hasContent && (
                 <div className="mt-6 grid grid-cols-3 gap-4">
                     <button 
-                        onClick={() => copyTextToClipboard(contentId)}
+                        onClick={handleCopy}
                         className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 group"
                     >
                         <span className="group-hover:scale-110 transition-transform">📋</span> <span className="hidden sm:inline">{t('common.copy')}</span>
@@ -54,7 +73,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, h
                         <span className="group-hover:scale-110 transition-transform">🖨️</span> <span className="hidden sm:inline">{t('common.pdf')}</span>
                     </button>
                     <button 
-                        onClick={() => downloadElementAsImage(contentId, 'documento-finhero.jpg')}
+                        onClick={handleDownload}
                         className="py-3 px-4 bg-brand-pink hover:bg-brand-hover text-white text-sm font-bold rounded-xl transition-colors shadow-glow flex items-center justify-center gap-2 group"
                     >
                         <span className="group-hover:scale-110 transition-transform">⬇️</span> <span className="hidden sm:inline">{t('common.download')}</span>
