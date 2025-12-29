@@ -19,7 +19,7 @@ const InterestCalculator: React.FC = () => {
     const [multaRate, setMultaRate] = useState(DEFAULT_TAXA_MULTA);
     const [jurosRate, setJurosRate] = useState(DEFAULT_TAXA_JUROS);
     const [title, setTitle] = useState('');
-    const [value, setValue] = useState<number | ''>(''); // Changed to support CurrencyInput
+    const [value, setValue] = useState<number | ''>(''); 
     const [dateDue, setDateDue] = useState('');
     const [datePaid, setDatePaid] = useState('');
     const [isPaid, setIsPaid] = useState(false);
@@ -178,7 +178,7 @@ const InterestCalculator: React.FC = () => {
                 {company && (
                     <div className="flex flex-col gap-5 text-sm font-sans">
                         <div className="flex flex-col items-center border-b border-slate-100 pb-6">
-                            <img src={company.logoUrl} alt="Logo" className="h-16 w-16 rounded-full mb-3 object-contain" />
+                            <img src={company.logoUrl} alt="Logo" className="h-20 w-auto mb-3 object-contain" />
                             <h2 className="font-bold text-xl text-brand-dark">{company.nome}</h2>
                             <p className="text-[10px] font-bold text-brand-pink uppercase tracking-widest mt-1">{t('juros.summary_title')}</p>
                         </div>

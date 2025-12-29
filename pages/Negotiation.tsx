@@ -89,7 +89,7 @@ const Negotiation: React.FC = () => {
                  {company && (
                      <div className="flex flex-col gap-6 text-sm font-sans h-full">
                          <div className="flex flex-col items-center pb-6 border-b border-slate-100">
-                             <img src={company.logoUrl} className="h-16 mb-4 object-contain" alt="logo" />
+                             <img src={company.logoUrl} className="h-16 w-auto mb-4 object-contain" alt="logo" />
                              <h2 className="font-bold text-xl text-brand-dark">{company.nome}</h2>
                              <span className="bg-brand-pink/10 text-brand-pink text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mt-2">{t('neg.doc_badge')}</span>
                          </div>

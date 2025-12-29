@@ -38,6 +38,18 @@ const PaymentReceipt: React.FC = () => {
         addToast('Item adicionado.', 'success');
     };
 
+    const moveItem = (index: number, direction: 'up' | 'down') => {
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === items.length - 1) return;
+
+        const newItems = [...items];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        
+        // Swap
+        [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
+        setItems(newItems);
+    };
+
     const handleGenerate = () => {
         if (!company || !client || items.length === 0) return addToast(t('common.preview_hint'), 'error');
         setShowResult(true);
@@ -87,11 +99,33 @@ const PaymentReceipt: React.FC = () => {
 
                 <div className="mb-6 space-y-2">
                     {items.length > 0 ? items.map((item, idx) => (
-                         <div key={item.id} className="flex justify-between items-center text-sm p-3 bg-white border border-slate-100 rounded-xl shadow-sm">
-                             <span className="font-medium text-slate-700">{item.descricao}</span>
+                         <div key={item.id} className="flex justify-between items-center text-sm p-3 bg-white border border-slate-100 rounded-xl shadow-sm group hover:border-brand-pink/30 transition-colors">
+                             <div className="flex items-center gap-3 flex-1">
+                                 {/* Ordenação */}
+                                 <div className="flex flex-col gap-0.5">
+                                     <button 
+                                        onClick={() => moveItem(idx, 'up')} 
+                                        disabled={idx === 0}
+                                        className="text-slate-400 hover:text-brand-pink disabled:opacity-20 disabled:cursor-not-allowed"
+                                     >
+                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+                                     </button>
+                                     <button 
+                                        onClick={() => moveItem(idx, 'down')} 
+                                        disabled={idx === items.length - 1}
+                                        className="text-slate-400 hover:text-brand-pink disabled:opacity-20 disabled:cursor-not-allowed"
+                                     >
+                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                     </button>
+                                 </div>
+                                 <div className="border-l border-slate-100 pl-3 h-8 flex items-center">
+                                     <span className="font-medium text-slate-700">{item.descricao}</span>
+                                 </div>
+                             </div>
+                             
                              <div className="flex items-center gap-3">
                                  <span className="font-bold text-brand-dark font-mono">{formatMoney(item.valor)}</span>
-                                 <button onClick={() => setItems(items.filter((_, i) => i !== idx))} className="w-6 h-6 rounded bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center font-bold">×</button>
+                                 <button onClick={() => setItems(items.filter((_, i) => i !== idx))} className="w-6 h-6 rounded bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center font-bold transition-colors">×</button>
                              </div>
                          </div>
                     )) : <div className="text-center p-4 border border-dashed border-slate-200 rounded-xl text-xs text-slate-400">{t('pag.no_items')}</div>}
@@ -124,7 +158,7 @@ const PaymentReceipt: React.FC = () => {
                          <div className="flex justify-between items-start border-b-2 border-slate-900 pb-6">
                              <div>
                                  <h2 className="text-3xl font-black text-brand-dark tracking-tighter">{t('pag.doc_title')}</h2>
-                                 <p className="text-sm text-slate-400 font-medium mt-1">DOC #{Date.now().toString().slice(-6)}</p>
+                                 {/* Código DOC removido conforme solicitado */}
                              </div>
                              <div className="text-right">
                                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_val_total')}</p>
@@ -173,7 +207,7 @@ const PaymentReceipt: React.FC = () => {
                          )}
 
                          <div className="mt-auto pt-10 flex items-center gap-4">
-                             <img src={company.logoUrl} className="w-14 h-14 rounded-full object-contain" alt="logo" />
+                             <img src={company.logoUrl} className="w-14 h-auto object-contain" alt="logo" />
                              <div>
                                  <p className="font-bold text-sm text-brand-dark">{company.nome}</p>
                                  <p className="text-xs text-slate-500">{t('pag.doc_dept')}</p>

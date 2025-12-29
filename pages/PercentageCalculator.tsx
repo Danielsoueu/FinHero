@@ -1,6 +1,40 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
+interface CardProps {
+    title: string;
+    children: React.ReactNode;
+    result: string;
+    onCalc: () => void;
+    onClear: () => void;
+    icon: string;
+    t: (key: string) => string;
+}
+
+const CalculatorCard: React.FC<CardProps> = ({ title, children, result, onCalc, onClear, icon, t }) => (
+    <div className="bg-white rounded-3xl shadow-card border border-slate-100 p-8 flex flex-col justify-between h-full hover:shadow-lg transition-shadow duration-300">
+        <div>
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg font-bold shadow-md">
+                    {icon}
+                </div>
+                <h3 className="font-bold text-slate-800 text-lg leading-tight">{title}</h3>
+            </div>
+            {children}
+        </div>
+        <div className="mt-8 pt-6 border-t border-slate-100">
+            <div className="flex justify-between items-end mb-5">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('common.result')}</span>
+                <span className="text-3xl font-bold text-brand-pink tracking-tight">{result}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+                <button onClick={onClear} className="px-4 py-3 text-xs font-bold text-slate-500 bg-slate-100 rounded-xl hover:bg-slate-200 transition">{t('common.clear')}</button>
+                <button onClick={onCalc} className="px-4 py-3 text-xs font-bold text-white bg-brand-pink rounded-xl hover:bg-brand-hover shadow-glow transition">{t('common.calculate')}</button>
+            </div>
+        </div>
+    </div>
+);
+
 const PercentageCalculator: React.FC = () => {
     const { t } = useLanguage();
 
@@ -34,30 +68,6 @@ const PercentageCalculator: React.FC = () => {
         if (!isNaN(v1) && !isNaN(v2) && v1 !== 0) setRes3((((v2 - v1) / v1) * 100).toFixed(2) + '%');
     };
 
-    const Card = ({ title, children, result, onCalc, onClear, icon }: any) => (
-        <div className="bg-white rounded-3xl shadow-card border border-slate-100 p-8 flex flex-col justify-between h-full hover:shadow-lg transition-shadow duration-300">
-            <div>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg font-bold shadow-md">
-                        {icon}
-                    </div>
-                    <h3 className="font-bold text-slate-800 text-lg leading-tight">{title}</h3>
-                </div>
-                {children}
-            </div>
-            <div className="mt-8 pt-6 border-t border-slate-100">
-                <div className="flex justify-between items-end mb-5">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('common.result')}</span>
-                    <span className="text-3xl font-bold text-brand-pink tracking-tight">{result}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                    <button onClick={onClear} className="px-4 py-3 text-xs font-bold text-slate-500 bg-slate-100 rounded-xl hover:bg-slate-200 transition">{t('common.clear')}</button>
-                    <button onClick={onCalc} className="px-4 py-3 text-xs font-bold text-white bg-brand-pink rounded-xl hover:bg-brand-hover shadow-glow transition">{t('common.calculate')}</button>
-                </div>
-            </div>
-        </div>
-    );
-
     return (
         <div className="max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-10">
@@ -71,12 +81,13 @@ const PercentageCalculator: React.FC = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card 
+                <CalculatorCard 
                     title={t('porc.c1_title')} 
                     result={`$ ${res1}`} 
                     onCalc={handleCalc1} 
                     onClear={() => { setC1_p(''); setC1_v(''); setRes1('0.00'); }}
                     icon="%"
+                    t={t}
                 >
                     <div className="space-y-4">
                         <div>
@@ -88,14 +99,15 @@ const PercentageCalculator: React.FC = () => {
                             <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c1_v} onChange={e => setC1_v(e.target.value)} />
                         </div>
                     </div>
-                </Card>
+                </CalculatorCard>
 
-                <Card 
+                <CalculatorCard 
                     title={t('porc.c2_title')} 
                     result={res2} 
                     onCalc={handleCalc2} 
                     onClear={() => { setC2_v1(''); setC2_v2(''); setRes2('0%'); }}
                     icon="÷"
+                    t={t}
                 >
                     <div className="space-y-4">
                         <div>
@@ -107,14 +119,15 @@ const PercentageCalculator: React.FC = () => {
                             <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c2_v2} onChange={e => setC2_v2(e.target.value)} />
                         </div>
                     </div>
-                </Card>
+                </CalculatorCard>
 
-                <Card 
+                <CalculatorCard 
                     title={t('porc.c3_title')} 
                     result={res3} 
                     onCalc={handleCalc3} 
                     onClear={() => { setC3_v1(''); setC3_v2(''); setRes3('0%'); }}
                     icon="↗"
+                    t={t}
                 >
                     <div className="space-y-4">
                         <div>
@@ -126,7 +139,7 @@ const PercentageCalculator: React.FC = () => {
                             <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c3_v2} onChange={e => setC3_v2(e.target.value)} />
                         </div>
                     </div>
-                </Card>
+                </CalculatorCard>
             </div>
         </div>
     );

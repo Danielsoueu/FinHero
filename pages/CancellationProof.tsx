@@ -64,7 +64,7 @@ const CancellationProof: React.FC = () => {
                     <div className="flex flex-col gap-8 text-sm font-sans h-full justify-between">
                         <div>
                             <div className="text-center border-b border-slate-100 pb-8 mb-6">
-                                <img src={company.logoUrl} alt="Logo" className="h-20 mx-auto mb-5 object-contain" />
+                                <img src={company.logoUrl} alt="Logo" className="h-20 w-auto mx-auto mb-5 object-contain" />
                                 <h2 className="text-2xl font-bold text-brand-dark tracking-tight">{company.nome}</h2>
                             </div>
                             
