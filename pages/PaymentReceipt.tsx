@@ -158,7 +158,6 @@ const PaymentReceipt: React.FC = () => {
                          <div className="flex justify-between items-start border-b-2 border-slate-900 pb-6">
                              <div>
                                  <h2 className="text-3xl font-black text-brand-dark tracking-tighter">{t('pag.doc_title')}</h2>
-                                 {/* Código DOC removido conforme solicitado */}
                              </div>
                              <div className="text-right">
                                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_val_total')}</p>
@@ -207,7 +206,7 @@ const PaymentReceipt: React.FC = () => {
                          )}
 
                          <div className="mt-auto pt-10 flex items-center gap-4">
-                             <img src={company.logoUrl} className="w-14 h-auto object-contain" alt="logo" />
+                             <img src={company.logoUrl} className="max-h-20 w-auto object-contain" alt="logo" />
                              <div>
                                  <p className="font-bold text-sm text-brand-dark">{company.nome}</p>
                                  <p className="text-xs text-slate-500">{t('pag.doc_dept')}</p>
