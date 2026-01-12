@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinHero - Gestão Financeira</title>
-    <link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/60dcc0a5da3e33458a2f8d22/6305018659d81d248b6c0032_favicon.png">
+    <!-- Using SVG as favicon for perfect transparency and scaling -->
+    <link rel="icon" type="image/svg+xml" href="https://www.companyhero.com/companyhero-logo.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,20 +24,27 @@
                             hover: '#C2006B',
                             dark: '#0F172A', // Deep Slate/Black
                             light: '#F8FAFC',
-                            gray: '#64748B'
+                            gray: '#64748B',
+                            surface: '#ffffff'
                         }
                     },
                     boxShadow: {
                         'glow': '0 4px 14px 0 rgba(230, 0, 126, 0.39)',
-                        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 4px 20px -2px rgba(15, 23, 42, 0.08)',
+                        'floating': '0 10px 40px -10px rgba(0,0,0,0.1)'
                     },
                     animation: {
-                        'slide-in': 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
                     },
                     keyframes: {
                         slideIn: {
-                            '0%': { transform: 'translateX(100%)', opacity: '0' },
-                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
                         }
                     }
                 }
@@ -64,17 +72,20 @@
         }
         /* Custom Scrollbar for a more tech feel */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
+            background: transparent; 
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1; 
-            border-radius: 4px;
+            border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8; 
+        }
+        body {
+            background-color: #F1F5F9;
         }
     </style>
 <script type="importmap">
@@ -88,7 +99,7 @@
 }
 </script>
 </head>
-<body class="bg-brand-light text-slate-800 antialiased">
+<body class="bg-brand-light text-slate-800 antialiased selection:bg-brand-pink selection:text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
