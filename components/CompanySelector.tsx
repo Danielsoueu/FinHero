@@ -19,17 +19,18 @@ const CompanySelector: React.FC<CompanySelectorProps> = ({ selected, onSelect })
                     <button
                         key={company.id}
                         onClick={() => onSelect(company)}
-                        className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 w-28 group ${
+                        className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 w-32 group ${
                             selected?.id === company.id
                                 ? 'border-brand-pink bg-pink-50/50 shadow-sm'
                                 : 'border-slate-100 hover:border-pink-200 hover:bg-white'
                         }`}
                     >
-                        <div className={`w-14 h-14 rounded-full flex items-center justify-center bg-white shadow-sm p-1 mb-3 transition-transform duration-300 ${selected?.id === company.id ? 'scale-110 ring-2 ring-pink-100' : 'grayscale group-hover:grayscale-0'}`}>
+                        {/* Changed from rounded-full to rounded-lg and removed overflow clipping that forces circle */}
+                        <div className={`w-20 h-14 rounded-lg flex items-center justify-center bg-white shadow-sm p-1.5 mb-3 transition-transform duration-300 ${selected?.id === company.id ? 'scale-105 ring-2 ring-pink-100' : 'grayscale group-hover:grayscale-0'}`}>
                             <img 
                                 src={company.logoUrl} 
                                 alt={company.nome} 
-                                className="w-full h-full rounded-full object-contain"
+                                className="w-full h-full object-contain"
                             />
                         </div>
                         <span className={`text-xs font-bold transition-colors ${selected?.id === company.id ? 'text-brand-pink' : 'text-slate-500'}`}>

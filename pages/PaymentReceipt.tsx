@@ -161,11 +161,19 @@ const PaymentReceipt: React.FC = () => {
                              </div>
                              <div className="text-right">
                                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_val_total')}</p>
-                                 <p className="text-4xl font-bold text-brand-pink tracking-tight">{formatMoney(total)}</p>
+                                 <p 
+                                    className="text-4xl font-bold tracking-tight"
+                                    style={{ color: '#E6007E', printColorAdjust: 'exact', WebkitPrintColorAdjust: 'exact' }}
+                                 >
+                                    {formatMoney(total)}
+                                 </p>
                              </div>
                          </div>
 
-                         <div className="grid grid-cols-2 gap-8 py-2 bg-slate-50 p-6 rounded-2xl">
+                         <div 
+                            className="grid grid-cols-2 gap-8 py-2 bg-slate-50 p-6 rounded-2xl"
+                            style={{ backgroundColor: '#F8FAFC', printColorAdjust: 'exact', WebkitPrintColorAdjust: 'exact' }}
+                        >
                              <div>
                                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_received_from')}</p>
                                  <p className="font-bold text-brand-dark text-lg leading-tight">{client}</p>
@@ -205,8 +213,23 @@ const PaymentReceipt: React.FC = () => {
                              </div>
                          )}
 
-                         <div className="mt-auto pt-10 flex items-center gap-4">
-                             <img src={company.logoUrl} className="max-h-20 w-auto object-contain" alt="logo" />
+                         {/* Total Block Fixed for PDF with Hardcoded Styles */}
+                         <div 
+                             className="p-6 rounded-xl mt-6 flex justify-between items-center" 
+                             style={{ 
+                                 backgroundColor: '#0F172A', 
+                                 color: '#ffffff', 
+                                 printColorAdjust: 'exact', 
+                                 WebkitPrintColorAdjust: 'exact',
+                                 border: '1px solid #0F172A'
+                             }}
+                         >
+                             <span className="text-sm font-medium opacity-80" style={{ color: '#ffffff' }}>{t('pag.doc_val_total')}</span>
+                             <span className="text-2xl font-bold tracking-tight" style={{ color: '#ffffff' }}>{formatMoney(total)}</span>
+                         </div>
+
+                         <div className="mt-auto pt-6 flex items-center gap-4">
+                             <img src={company.logoUrl} className="max-h-24 w-auto object-contain" alt="logo" />
                              <div>
                                  <p className="font-bold text-sm text-brand-dark">{company.nome}</p>
                                  <p className="text-xs text-slate-500">{t('pag.doc_dept')}</p>

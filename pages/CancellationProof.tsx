@@ -92,9 +92,19 @@ const CancellationProof: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="text-center p-6 bg-slate-900 rounded-2xl text-white shadow-lg">
-                             <p className="font-bold text-lg tracking-widest text-brand-pink">{t('cancel.doc_title')}</p>
-                             <p className="text-xs text-slate-400 mt-2 opacity-80">{t('cancel.doc_footer')}</p>
+                        {/* Footer Block Fixed for PDF with Hardcoded Styles */}
+                        <div 
+                            className="text-center p-6 rounded-2xl shadow-lg"
+                            style={{ 
+                                backgroundColor: '#0F172A', 
+                                color: '#ffffff', 
+                                printColorAdjust: 'exact', 
+                                WebkitPrintColorAdjust: 'exact',
+                                border: '1px solid #0F172A'
+                            }}
+                        >
+                             <p className="font-bold text-lg tracking-widest text-brand-pink" style={{ color: '#E6007E' }}>{t('cancel.doc_title')}</p>
+                             <p className="text-xs mt-2 opacity-80" style={{ color: '#94a3b8' }}>{t('cancel.doc_footer')}</p>
                         </div>
                     </div>
                 )}

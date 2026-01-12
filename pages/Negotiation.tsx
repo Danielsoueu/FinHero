@@ -89,7 +89,7 @@ const Negotiation: React.FC = () => {
                  {company && (
                      <div className="flex flex-col gap-6 text-sm font-sans h-full">
                          <div className="flex flex-col items-center pb-6 border-b border-slate-100">
-                             <img src={company.logoUrl} className="max-h-20 w-auto mb-4 object-contain" alt="logo" />
+                             <img src={company.logoUrl} className="max-h-24 w-auto mb-4 object-contain" alt="logo" />
                              <h2 className="font-bold text-xl text-brand-dark">{company.nome}</h2>
                              <span className="bg-brand-pink/10 text-brand-pink text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mt-2">{t('neg.doc_badge')}</span>
                          </div>
@@ -127,9 +127,19 @@ const Negotiation: React.FC = () => {
                              </div>
                          </div>
 
-                         <div className="bg-brand-dark text-white p-6 rounded-2xl flex justify-between items-center shadow-lg mt-4">
-                             <span className="text-sm font-medium opacity-80">{t('neg.doc_final_val')}</span>
-                             <span className="text-3xl font-bold tracking-tight">{formatMoney(finalAmount)}</span>
+                         {/* Total Block Fixed for PDF with Hardcoded Styles */}
+                         <div 
+                             className="p-6 rounded-2xl flex justify-between items-center shadow-lg mt-4"
+                             style={{ 
+                                backgroundColor: '#0F172A', 
+                                color: '#ffffff', 
+                                printColorAdjust: 'exact', 
+                                WebkitPrintColorAdjust: 'exact',
+                                border: '1px solid #0F172A'
+                             }}
+                         >
+                             <span className="text-sm font-medium opacity-80" style={{ color: '#ffffff' }}>{t('neg.doc_final_val')}</span>
+                             <span className="text-3xl font-bold tracking-tight" style={{ color: '#ffffff' }}>{formatMoney(finalAmount)}</span>
                          </div>
 
                          <div className="text-center text-[10px] text-slate-400 mt-2 italic">

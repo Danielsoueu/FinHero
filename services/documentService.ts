@@ -45,7 +45,8 @@ export const printElement = (elementId: string) => {
             <script src="https://cdn.tailwindcss.com"></script>
             <style>
                 body { font-family: 'Inter', sans-serif; padding: 40px; -webkit-print-color-adjust: exact; }
-                img { max-width: 80px; height: auto; border-radius: 50%; }
+                /* Allow images to be sized by their Tailwind classes without forced clipping */
+                img { max-width: 100%; height: auto; }
             </style>
         </head>
         <body>
