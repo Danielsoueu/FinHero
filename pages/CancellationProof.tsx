@@ -24,12 +24,12 @@ const CancellationProof: React.FC = () => {
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-card border border-slate-100">
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-brand-pink">
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-card border border-slate-100 dark:border-slate-800 transition-colors">
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-brand-pink">
                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </div>
-                    <h2 className="text-xl font-bold text-brand-dark">{t('cancel.title')}</h2>
+                    <h2 className="text-xl font-bold text-brand-dark dark:text-white">{t('cancel.title')}</h2>
                 </div>
                 
                 <CompanySelector selected={company} onSelect={setCompany} />
@@ -52,9 +52,9 @@ const CancellationProof: React.FC = () => {
                         <textarea className="input-field" rows={4} placeholder={t('cancel.reason_placeholder')} value={reason} onChange={e => setReason(e.target.value)} />
                     </div>
                     
-                    <div className="flex gap-4 pt-4 border-t border-slate-100">
+                    <div className="flex gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                         <button onClick={handleGenerate} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('cancel.generate_btn')}</button>
-                        <button onClick={handleClear} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">{t('common.clean')}</button>
+                        <button onClick={handleClear} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">{t('common.clean')}</button>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,9 @@ const CancellationProof: React.FC = () => {
             
             <style>{`
                 .input-field { width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; font-size: 0.875rem; outline: none; transition: all 0.2s; color: #334155; }
+                .dark .input-field { background-color: #0F172A; border-color: #334155; color: #F8FAFC; }
                 .input-field:focus { border-color: #E6007E; box-shadow: 0 0 0 3px rgba(230, 0, 126, 0.1); }
+                .dark .input-field:focus { border-color: #E6007E; background-color: #1E293B; }
                 .label-field { font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
             `}</style>
         </div>

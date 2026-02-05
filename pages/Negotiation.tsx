@@ -34,12 +34,12 @@ const Negotiation: React.FC = () => {
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-card border border-slate-100">
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-brand-pink">
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-card border border-slate-100 dark:border-slate-800 transition-colors">
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-brand-pink">
                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17 2 2 4-4"/><path d="M11 17l-4 4L2 19V5l4-2 3 3 5 5 5-5 3 3v8"/></svg>
                     </div>
-                    <h2 className="text-xl font-bold text-brand-dark">{t('neg.title')}</h2>
+                    <h2 className="text-xl font-bold text-brand-dark dark:text-white">{t('neg.title')}</h2>
                 </div>
 
                 <CompanySelector selected={company} onSelect={setCompany} />
@@ -50,22 +50,22 @@ const Negotiation: React.FC = () => {
                         <input className="input-field" placeholder={t('common.client_placeholder')} value={client} onChange={e => setClient(e.target.value)} />
                     </div>
                     
-                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                        <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">{t('neg.add_debt_title')}</label>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2 block">{t('neg.add_debt_title')}</label>
                         <div className="flex gap-3 mb-3">
                             <input className="input-field flex-grow" placeholder={t('neg.invoice_placeholder')} value={title} onChange={e => setTitle(e.target.value)} />
                             <input className="input-field w-1/3" type="number" placeholder={t('neg.val_placeholder')} value={val} onChange={e => setVal(e.target.value)} />
                         </div>
-                        <button onClick={addItem} className="w-full py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-xl font-bold text-sm transition">{t('neg.add_list_btn')}</button>
+                        <button onClick={addItem} className="w-full py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 rounded-xl font-bold text-sm transition">{t('neg.add_list_btn')}</button>
                     </div>
 
-                    <div className="bg-white border border-slate-100 rounded-2xl p-2 max-h-40 overflow-y-auto custom-scrollbar shadow-inner">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-2 max-h-40 overflow-y-auto custom-scrollbar shadow-inner">
                         {items.length === 0 ? <p className="text-xs text-center text-gray-400 py-4">{t('neg.no_debts')}</p> : 
                             items.map((it, i) => (
-                                <div key={i} className="flex justify-between items-center text-sm p-3 border-b last:border-0 border-slate-50">
-                                    <span className="text-slate-700 font-medium">{it.titulo}</span>
+                                <div key={i} className="flex justify-between items-center text-sm p-3 border-b last:border-0 border-slate-50 dark:border-slate-800">
+                                    <span className="text-slate-700 dark:text-slate-300 font-medium">{it.titulo}</span>
                                     <div className="flex gap-3">
-                                        <span className="font-mono text-brand-dark font-bold">{formatMoney(it.valor)}</span>
+                                        <span className="font-mono text-brand-dark dark:text-white font-bold">{formatMoney(it.valor)}</span>
                                         <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 font-bold transition">×</button>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@ const Negotiation: React.FC = () => {
 
                     <div className="flex gap-4 pt-2">
                         <button onClick={handleGenerate} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('neg.generate_btn')}</button>
-                        <button onClick={() => { setItems([]); setShowResult(false); }} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">{t('common.clean')}</button>
+                        <button onClick={() => { setItems([]); setShowResult(false); }} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">{t('common.clean')}</button>
                     </div>
                 </div>
             </div>
@@ -151,7 +151,9 @@ const Negotiation: React.FC = () => {
 
             <style>{`
                 .input-field { width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; font-size: 0.875rem; outline: none; transition: all 0.2s; color: #334155; }
+                .dark .input-field { background-color: #0F172A; border-color: #334155; color: #F8FAFC; }
                 .input-field:focus { border-color: #E6007E; box-shadow: 0 0 0 3px rgba(230, 0, 126, 0.1); }
+                .dark .input-field:focus { border-color: #E6007E; background-color: #1E293B; }
                 .label-field { font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
             `}</style>
         </div>

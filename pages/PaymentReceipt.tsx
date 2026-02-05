@@ -16,191 +16,147 @@ const PaymentReceipt: React.FC = () => {
     const [items, setItems] = useState<ReceiptItem[]>([]);
     const [showResult, setShowResult] = useState(false);
 
-    // Item form
     const [desc, setDesc] = useState('');
     const [plan, setPlan] = useState('');
     const [method, setMethod] = useState('Pix');
     const [val, setVal] = useState<number | ''>('');
 
     const addItem = () => {
-        if (!desc) return addToast('Informe a descrição do item.', 'error');
-        const valueNum = typeof val === 'string' ? parseFloat(val) : val;
-        if (!valueNum || isNaN(valueNum)) return addToast('Informe um valor válido.', 'error');
+        if (!desc) return addToast('Informe a descrição.', 'error');
+        const v = typeof val === 'string' ? parseFloat(val) : val;
+        if (!v || isNaN(v)) return addToast('Informe um valor.', 'error');
         
-        setItems([...items, {
-            id: Date.now().toString(),
-            descricao: desc,
-            plano: plan,
-            formaPagamento: method,
-            valor: valueNum
-        }]);
+        setItems([...items, { id: Math.random().toString(36).substr(2, 9), descricao: desc, plano: plan, formaPagamento: method, valor: v }]);
         setDesc(''); setPlan(''); setVal('');
-        addToast('Item adicionado.', 'success');
+        addToast('Item adicionado!', 'success');
     };
 
     const moveItem = (index: number, direction: 'up' | 'down') => {
-        if (direction === 'up' && index === 0) return;
-        if (direction === 'down' && index === items.length - 1) return;
-
+        if ((direction === 'up' && index === 0) || (direction === 'down' && index === items.length - 1)) return;
         const newItems = [...items];
-        const targetIndex = direction === 'up' ? index - 1 : index + 1;
-        
-        // Swap
-        [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
+        const swapWith = direction === 'up' ? index - 1 : index + 1;
+        [newItems[index], newItems[swapWith]] = [newItems[swapWith], newItems[index]];
         setItems(newItems);
     };
 
-    const handleGenerate = () => {
-        if (!company || !client || items.length === 0) return addToast(t('common.preview_hint'), 'error');
-        setShowResult(true);
-        addToast('Recibo gerado!', 'success');
-    };
-
-    const handleClear = () => {
-        setItems([]); setShowResult(false); setClient(''); setObs('');
-        addToast('Tudo limpo.', 'info');
-    };
-
-    const total = items.reduce((acc, i) => acc + i.valor, 0);
     const formatMoney = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-card border border-slate-100">
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-brand-pink">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-hero border border-slate-100 dark:border-slate-800 transition-colors">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-brand-pink text-white flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                     </div>
-                    <h2 className="text-xl font-bold text-brand-dark">{t('pag.title')}</h2>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('pag.title')}</h2>
                 </div>
                 
                 <CompanySelector selected={company} onSelect={setCompany} />
                 
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 space-y-4">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide">{t('pag.add_item_title')}</h3>
-                    <input className="input-sm" placeholder={t('pag.desc_placeholder')} value={desc} onChange={e => setDesc(e.target.value)} />
+                <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 mb-8 space-y-4">
+                    <h3 className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Novo Item no Recibo</h3>
+                    <input className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="O que está sendo pago? (ex: Mensalidade)" value={desc} onChange={e => setDesc(e.target.value)} />
                     <div className="grid grid-cols-2 gap-3">
-                         <input className="input-sm" placeholder={t('pag.plan_placeholder')} value={plan} onChange={e => setPlan(e.target.value)} />
-                         <select className="input-sm bg-white" value={method} onChange={e => setMethod(e.target.value)}>
-                            <option value="Pix">{t('pag.method_pix')}</option>
-                            <option value="Boleto">{t('pag.method_ticket')}</option>
-                            <option value="Cartão">{t('pag.method_card')}</option>
-                            <option value="Transferência">{t('pag.method_transfer')}</option>
+                         <input className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="Plano" value={plan} onChange={e => setPlan(e.target.value)} />
+                         <select className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" value={method} onChange={e => setMethod(e.target.value)}>
+                            <option value="Pix">Pix</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Cartão">Cartão</option>
+                            <option value="Dinheiro">Dinheiro</option>
                          </select>
                     </div>
-                    <CurrencyInput 
-                        className="input-sm" 
-                        placeholder={t('pag.val_placeholder')} 
-                        value={val} 
-                        onChange={setVal} 
-                    />
-                    <button onClick={addItem} className="w-full bg-brand-dark text-white py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-lg">{t('pag.add_list_btn')}</button>
+                    <CurrencyInput className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="Valor (R$)" value={val} onChange={setVal} />
+                    <button onClick={addItem} className="w-full bg-slate-900 dark:bg-slate-700 text-white py-4 rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition shadow-lg">Adicionar à Lista</button>
                 </div>
 
-                <div className="mb-6 space-y-2">
+                <div className="mb-8 space-y-3">
                     {items.length > 0 ? items.map((item, idx) => (
-                         <div key={item.id} className="flex justify-between items-center text-sm p-3 bg-white border border-slate-100 rounded-xl shadow-sm group hover:border-brand-pink/30 transition-colors">
-                             <div className="flex items-center gap-3 flex-1">
-                                 {/* Ordenação */}
-                                 <div className="flex flex-col gap-0.5">
-                                     <button 
-                                        onClick={() => moveItem(idx, 'up')} 
-                                        disabled={idx === 0}
-                                        className="text-slate-400 hover:text-brand-pink disabled:opacity-20 disabled:cursor-not-allowed"
-                                     >
-                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-                                     </button>
-                                     <button 
-                                        onClick={() => moveItem(idx, 'down')} 
-                                        disabled={idx === items.length - 1}
-                                        className="text-slate-400 hover:text-brand-pink disabled:opacity-20 disabled:cursor-not-allowed"
-                                     >
-                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                     </button>
-                                 </div>
-                                 <div className="border-l border-slate-100 pl-3 h-8 flex items-center">
-                                     <span className="font-medium text-slate-700">{item.descricao}</span>
-                                 </div>
+                         <div key={item.id} className="flex items-center p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-brand-pink/30 dark:hover:border-brand-pink/30 transition-hero group">
+                             <div className="flex flex-col gap-1 mr-4 shrink-0">
+                                 <button onClick={() => moveItem(idx, 'up')} disabled={idx === 0} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▲</button>
+                                 <button onClick={() => moveItem(idx, 'down')} disabled={idx === items.length - 1} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▼</button>
                              </div>
-                             
-                             <div className="flex items-center gap-3">
-                                 <span className="font-bold text-brand-dark font-mono">{formatMoney(item.valor)}</span>
-                                 <button onClick={() => setItems(items.filter((_, i) => i !== idx))} className="w-6 h-6 rounded bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center font-bold transition-colors">×</button>
+                             <div className="flex-1 min-w-0 pr-2">
+                                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{item.descricao}</p>
+                                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">{item.plano || 'Geral'} • {item.formaPagamento}</p>
                              </div>
+                             <div className="text-right ml-2 mr-4">
+                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formatMoney(item.valor)}</p>
+                             </div>
+                             <button onClick={() => setItems(items.filter(it => it.id !== item.id))} className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 transition-hero opacity-0 group-hover:opacity-100">✕</button>
                          </div>
-                    )) : <div className="text-center p-4 border border-dashed border-slate-200 rounded-xl text-xs text-slate-400">{t('pag.no_items')}</div>}
+                    )) : (
+                        <div className="text-center p-10 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 dark:text-slate-600">
+                             <p className="text-xs font-bold uppercase tracking-widest">Lista vazia</p>
+                        </div>
+                    )}
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                    <div>
-                        <label className="label-field">{t('common.client')}</label>
-                        <input className="input-field" placeholder={t('common.client_placeholder')} value={client} onChange={e => setClient(e.target.value)} />
-                    </div>
-                    <div>
-                        <label className="label-field ml-1">{t('pag.date_label')}</label>
-                        <input type="date" className="input-field" value={date} onChange={e => setDate(e.target.value)} />
-                    </div>
-                    <div>
-                        <label className="label-field">{t('common.obs_label')}</label>
-                        <textarea className="input-field" rows={2} placeholder={t('pag.obs_placeholder')} value={obs} onChange={e => setObs(e.target.value)} />
+                <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                            <label className="label-field">{t('common.client')}</label>
+                            <input className="input-hero" placeholder="Nome Completo" value={client} onChange={e => setClient(e.target.value)} />
+                        </div>
+                        <div>
+                            <label className="label-field">Data do Pagamento</label>
+                            <input type="date" className="input-hero" value={date} onChange={e => setDate(e.target.value)} />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="label-field">Observações</label>
+                            <textarea className="input-hero" rows={2} placeholder="Opcional..." value={obs} onChange={e => setObs(e.target.value)} />
+                        </div>
                     </div>
                     
                     <div className="flex gap-4 pt-2">
-                        <button onClick={handleGenerate} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('pag.generate_btn')}</button>
-                        <button onClick={handleClear} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">{t('common.clean')}</button>
+                        <button onClick={() => setShowResult(true)} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">Gerar Recibo</button>
+                        <button onClick={() => {setItems([]); setClient(''); setShowResult(false);}} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Limpar</button>
                     </div>
                 </div>
             </div>
 
             <PreviewCard contentId="receipt-preview" hasContent={showResult}>
                  {company && (
-                     <div className="flex flex-col gap-6 font-sans">
-                         <div className="flex justify-between items-start border-b-2 border-slate-900 pb-6">
+                     <div className="flex flex-col gap-8 font-sans">
+                         <div className="flex justify-between items-start border-b-4 border-slate-900 pb-8">
                              <div>
-                                 <h2 className="text-3xl font-black text-brand-dark tracking-tighter">{t('pag.doc_title')}</h2>
+                                 <h2 className="text-4xl font-black text-slate-900 tracking-tighter">RECIBO</h2>
+                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em] mt-1"># HERO-{Math.floor(Math.random() * 9000) + 1000}</p>
                              </div>
                              <div className="text-right">
-                                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_val_total')}</p>
-                                 <p 
-                                    className="text-4xl font-bold tracking-tight"
-                                    style={{ color: '#E6007E', printColorAdjust: 'exact', WebkitPrintColorAdjust: 'exact' }}
-                                 >
-                                    {formatMoney(total)}
-                                 </p>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Total Recebido</p>
+                                 <p className="text-4xl font-black text-brand-pink tracking-tight">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</p>
                              </div>
                          </div>
 
-                         <div 
-                            className="grid grid-cols-2 gap-8 py-2 bg-slate-50 p-6 rounded-2xl"
-                            style={{ backgroundColor: '#F8FAFC', printColorAdjust: 'exact', WebkitPrintColorAdjust: 'exact' }}
-                        >
+                         <div className="grid grid-cols-2 gap-10 bg-slate-50 p-8 rounded-[1.5rem] border border-slate-100">
                              <div>
-                                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_received_from')}</p>
-                                 <p className="font-bold text-brand-dark text-lg leading-tight">{client}</p>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">PAGO POR</p>
+                                 <p className="font-bold text-slate-900 text-xl leading-tight">{client || '---'}</p>
                              </div>
                              <div className="text-right">
-                                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('pag.doc_date')}</p>
-                                 <p className="font-bold text-brand-dark">{date ? date.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR')}</p>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">DATA DA OPERAÇÃO</p>
+                                 <p className="font-bold text-slate-900 text-lg">{date ? date.split('-').reverse().join('/') : new Date().toLocaleDateString()}</p>
                              </div>
                          </div>
 
-                         <div className="mt-2">
+                         <div className="mt-4">
                              <table className="w-full text-sm">
                                  <thead>
-                                     <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] tracking-wider">
-                                         <th className="text-left py-3 pl-2 font-bold">{t('pag.table_desc')}</th>
-                                         <th className="text-left py-3 font-bold">{t('pag.table_plan')}</th>
-                                         <th className="text-left py-3 font-bold">{t('pag.table_method')}</th>
-                                         <th className="text-right py-3 pr-2 font-bold">{t('pag.table_val')}</th>
+                                     <tr className="border-b border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-[0.1em]">
+                                         <th className="text-left py-4 pl-4">Item / Descrição</th>
+                                         <th className="text-left py-4">Plano</th>
+                                         <th className="text-left py-4">Pagamento</th>
+                                         <th className="text-right py-4 pr-4">Valor</th>
                                      </tr>
                                  </thead>
                                  <tbody className="divide-y divide-slate-100">
                                      {items.map((it, i) => (
-                                         <tr key={i}>
-                                             <td className="py-4 pl-2 text-slate-800 font-semibold">{it.descricao}</td>
-                                             <td className="py-4 text-slate-500">{it.plano}</td>
-                                             <td className="py-4 text-slate-500"><span className="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">{it.formaPagamento}</span></td>
-                                             <td className="py-4 pr-2 text-right font-mono font-bold text-slate-800">{formatMoney(it.valor)}</td>
+                                         <tr key={i} className="hover:bg-slate-50 transition-colors">
+                                             <td className="py-5 pl-4 text-slate-900 font-bold">{it.descricao}</td>
+                                             <td className="py-5 text-slate-500 font-medium">{it.plano || '---'}</td>
+                                             <td className="py-5"><span className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-slate-600 uppercase">{it.formaPagamento}</span></td>
+                                             <td className="py-5 pr-4 text-right font-black text-slate-900">{formatMoney(it.valor)}</td>
                                          </tr>
                                      ))}
                                  </tbody>
@@ -208,34 +164,25 @@ const PaymentReceipt: React.FC = () => {
                          </div>
 
                          {obs && (
-                             <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-xl text-xs text-yellow-800 mt-2">
-                                 <strong className="uppercase text-[10px] tracking-wide block mb-1 opacity-70">{t('common.obs_label')}</strong> {obs}
+                             <div className="bg-brand-pink/5 border border-brand-pink/10 p-5 rounded-2xl text-xs text-brand-pink mt-4">
+                                 <strong className="uppercase font-black text-[10px] tracking-widest block mb-2 opacity-70">Nota Interna</strong>
+                                 <p className="font-medium text-slate-700 leading-relaxed italic">{obs}</p>
                              </div>
                          )}
 
-                         {/* Total Block Fixed for PDF with Hardcoded Styles */}
-                         <div 
-                             className="p-6 rounded-xl mt-6 flex justify-between items-center" 
-                             style={{ 
-                                 backgroundColor: '#0F172A', 
-                                 color: '#ffffff', 
-                                 printColorAdjust: 'exact', 
-                                 WebkitPrintColorAdjust: 'exact',
-                                 border: '1px solid #0F172A'
-                             }}
-                         >
-                             <span className="text-sm font-medium opacity-80" style={{ color: '#ffffff' }}>{t('pag.doc_val_total')}</span>
-                             <span className="text-2xl font-bold tracking-tight" style={{ color: '#ffffff' }}>{formatMoney(total)}</span>
+                         <div className="p-8 rounded-[2rem] mt-6 flex justify-between items-center bg-slate-900 text-white shadow-xl shadow-slate-200">
+                             <span className="text-base font-bold opacity-70 tracking-wide uppercase">Valor Liquidado</span>
+                             <span className="text-3xl font-black">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</span>
                          </div>
 
-                         <div className="mt-auto pt-6 flex items-center gap-4">
-                             <img src={company.logoUrl} className="max-h-24 w-auto object-contain" alt="logo" />
-                             <div>
-                                 <p className="font-bold text-sm text-brand-dark">{company.nome}</p>
-                                 <p className="text-xs text-slate-500">{t('pag.doc_dept')}</p>
+                         <div className="mt-10 flex items-center gap-6 p-6 border border-slate-100 rounded-3xl bg-slate-50/50">
+                             <img src={company.logoUrl} className="max-h-16 w-auto object-contain" alt="logo" />
+                             <div className="border-l border-slate-200 pl-6">
+                                 <p className="font-black text-slate-900 text-base">{company.nome}</p>
+                                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Quitação Eletrônica</p>
                              </div>
-                             <div className="ml-auto text-[10px] text-slate-300 max-w-[200px] text-right italic leading-tight">
-                                 {t('pag.doc_legal')}
+                             <div className="ml-auto text-[10px] text-slate-400 max-w-[220px] text-right italic leading-relaxed">
+                                 Declaramos para os devidos fins que recebemos a importância supra, dando plena e geral quitação de todos os itens listados.
                              </div>
                          </div>
                      </div>
@@ -243,11 +190,11 @@ const PaymentReceipt: React.FC = () => {
             </PreviewCard>
 
             <style>{`
-                .input-field { width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; font-size: 0.875rem; outline: none; transition: all 0.2s; color: #334155; }
-                .input-field:focus { border-color: #E6007E; box-shadow: 0 0 0 3px rgba(230, 0, 126, 0.1); }
-                .input-sm { width: 100%; padding: 0.6rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; font-size: 0.8rem; outline: none; transition: all 0.2s; color: #334155; }
-                .input-sm:focus { border-color: #E6007E; }
-                .label-field { font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+                .input-hero { width: 100%; padding: 0.875rem 1.25rem; border-radius: 1rem; border: 2px solid #F1F5F9; font-size: 0.9rem; outline: none; transition: hero; color: #1E293B; font-weight: 500; }
+                .dark .input-hero { background-color: #0F172A; border-color: #334155; color: #F8FAFC; }
+                .input-hero:focus { border-color: #E6007E; background: white; }
+                .dark .input-hero:focus { background-color: #1E293B; border-color: #E6007E; }
+                .label-field { font-size: 0.7rem; font-weight: 800; color: #94a3b8; margin-bottom: 0.35rem; display: block; text-transform: uppercase; letter-spacing: 0.1em; }
             `}</style>
         </div>
     );

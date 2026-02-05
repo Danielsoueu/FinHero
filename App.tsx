@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TabId } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import InterestCalculator from './pages/InterestCalculator';
@@ -43,7 +44,9 @@ const App: React.FC = () => {
     return (
         <LanguageProvider>
             <ToastProvider>
-                <AppContent />
+                <ThemeProvider>
+                    <AppContent />
+                </ThemeProvider>
             </ToastProvider>
         </LanguageProvider>
     );

@@ -12,23 +12,23 @@ interface CardProps {
 }
 
 const CalculatorCard: React.FC<CardProps> = ({ title, children, result, onCalc, onClear, icon, t }) => (
-    <div className="bg-white rounded-3xl shadow-card border border-slate-100 p-8 flex flex-col justify-between h-full hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-card border border-slate-100 dark:border-slate-800 p-8 flex flex-col justify-between h-full hover:shadow-lg transition-all duration-300">
         <div>
             <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg font-bold shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center text-lg font-bold shadow-md">
                     {icon}
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg leading-tight">{title}</h3>
+                <h3 className="font-bold text-slate-800 dark:text-white text-lg leading-tight">{title}</h3>
             </div>
             {children}
         </div>
-        <div className="mt-8 pt-6 border-t border-slate-100">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
             <div className="flex justify-between items-end mb-5">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('common.result')}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">{t('common.result')}</span>
                 <span className="text-3xl font-bold text-brand-pink tracking-tight">{result}</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
-                <button onClick={onClear} className="px-4 py-3 text-xs font-bold text-slate-500 bg-slate-100 rounded-xl hover:bg-slate-200 transition">{t('common.clear')}</button>
+                <button onClick={onClear} className="px-4 py-3 text-xs font-bold text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition">{t('common.clear')}</button>
                 <button onClick={onCalc} className="px-4 py-3 text-xs font-bold text-white bg-brand-pink rounded-xl hover:bg-brand-hover shadow-glow transition">{t('common.calculate')}</button>
             </div>
         </div>
@@ -68,15 +68,17 @@ const PercentageCalculator: React.FC = () => {
         if (!isNaN(v1) && !isNaN(v2) && v1 !== 0) setRes3((((v2 - v1) / v1) * 100).toFixed(2) + '%');
     };
 
+    const inputClass = "w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-center font-bold text-brand-dark dark:text-white outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition";
+
     return (
         <div className="max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-10">
-                <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-brand-pink">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-center text-brand-pink">
                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-brand-dark">{t('porc.title')}</h2>
-                    <p className="text-slate-500 text-sm">{t('porc.subtitle')}</p>
+                    <h2 className="text-2xl font-bold text-brand-dark dark:text-white">{t('porc.title')}</h2>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">{t('porc.subtitle')}</p>
                 </div>
             </div>
             
@@ -91,12 +93,12 @@ const PercentageCalculator: React.FC = () => {
                 >
                     <div className="space-y-4">
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c1_label_p')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c1_p} onChange={e => setC1_p(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c1_label_p')}</label>
+                            <input type="number" className={inputClass} value={c1_p} onChange={e => setC1_p(e.target.value)} />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c1_label_v')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c1_v} onChange={e => setC1_v(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c1_label_v')}</label>
+                            <input type="number" className={inputClass} value={c1_v} onChange={e => setC1_v(e.target.value)} />
                         </div>
                     </div>
                 </CalculatorCard>
@@ -111,12 +113,12 @@ const PercentageCalculator: React.FC = () => {
                 >
                     <div className="space-y-4">
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c2_label_part')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c2_v1} onChange={e => setC2_v1(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c2_label_part')}</label>
+                            <input type="number" className={inputClass} value={c2_v1} onChange={e => setC2_v1(e.target.value)} />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c2_label_whole')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c2_v2} onChange={e => setC2_v2(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c2_label_whole')}</label>
+                            <input type="number" className={inputClass} value={c2_v2} onChange={e => setC2_v2(e.target.value)} />
                         </div>
                     </div>
                 </CalculatorCard>
@@ -131,12 +133,12 @@ const PercentageCalculator: React.FC = () => {
                 >
                     <div className="space-y-4">
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c3_label_init')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c3_v1} onChange={e => setC3_v1(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c3_label_init')}</label>
+                            <input type="number" className={inputClass} value={c3_v1} onChange={e => setC3_v1(e.target.value)} />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('porc.c3_label_final')}</label>
-                            <input type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center font-bold text-brand-dark outline-none focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/10 transition" value={c3_v2} onChange={e => setC3_v2(e.target.value)} />
+                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 block">{t('porc.c3_label_final')}</label>
+                            <input type="number" className={inputClass} value={c3_v2} onChange={e => setC3_v2(e.target.value)} />
                         </div>
                     </div>
                 </CalculatorCard>
