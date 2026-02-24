@@ -21,14 +21,67 @@ const PaymentReceipt: React.FC = () => {
     const [method, setMethod] = useState('Pix');
     const [val, setVal] = useState<number | ''>('');
 
+    // Recurrence states
+    const [isRecurring, setIsRecurring] = useState(false);
+    const [dateStart, setDateStart] = useState('');
+    const [dateEnd, setDateEnd] = useState('');
+
+    const getSafeDate = (dateString: string) => {
+        if (!dateString) return new Date();
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day, 12, 0, 0);
+    };
+
     const addItem = () => {
         if (!desc) return addToast('Informe a descrição.', 'error');
         const v = typeof val === 'string' ? parseFloat(val) : val;
         if (!v || isNaN(v)) return addToast('Informe um valor.', 'error');
         
-        setItems([...items, { id: Math.random().toString(36).substr(2, 9), descricao: desc, plano: plan, formaPagamento: method, valor: v }]);
-        setDesc(''); setPlan(''); setVal('');
-        addToast('Item adicionado!', 'success');
+        if (isRecurring) {
+            if (!dateStart || !dateEnd) return addToast('Informe o período (início e fim).', 'error');
+            
+            const startDateObj = getSafeDate(dateStart);
+            const endDateObj = getSafeDate(dateEnd);
+            
+            if (endDateObj < startDateObj) return addToast('Data final deve ser após a inicial.', 'error');
+
+            const targetDay = startDateObj.getDate();
+            const newItems: ReceiptItem[] = [];
+            let currentDate = new Date(startDateObj);
+            let loopGuard = 0;
+
+            while (currentDate <= endDateObj && loopGuard < 60) {
+                const monthName = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                // Capitalize first letter
+                const formattedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                const itemDesc = `${desc} - ${formattedMonth}`;
+
+                newItems.push({
+                    id: Math.random().toString(36).substr(2, 9),
+                    descricao: itemDesc,
+                    plano: plan,
+                    formaPagamento: method,
+                    valor: v
+                });
+
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const nextMonthFirst = new Date(year, month + 1, 1, 12, 0, 0);
+                const daysInNextMonth = new Date(year, month + 2, 0).getDate();
+                nextMonthFirst.setDate(Math.min(targetDay, daysInNextMonth));
+                currentDate = nextMonthFirst;
+                loopGuard++;
+            }
+
+            setItems([...items, ...newItems]);
+            addToast(`${newItems.length} itens adicionados!`, 'success');
+            // Reset fields but keep recurrence mode if user wants to add more
+            setDesc(''); setPlan(''); setVal('');
+        } else {
+            setItems([...items, { id: Math.random().toString(36).substr(2, 9), descricao: desc, plano: plan, formaPagamento: method, valor: v }]);
+            setDesc(''); setPlan(''); setVal('');
+            addToast('Item adicionado!', 'success');
+        }
     };
 
     const moveItem = (index: number, direction: 'up' | 'down') => {
@@ -54,8 +107,17 @@ const PaymentReceipt: React.FC = () => {
                 <CompanySelector selected={company} onSelect={setCompany} />
                 
                 <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 mb-8 space-y-4">
-                    <h3 className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Novo Item no Recibo</h3>
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Novo Item no Recibo</h3>
+                    </div>
+
+                    <div className="flex p-1 bg-white dark:bg-slate-900 rounded-full border border-slate-100 dark:border-slate-700 mb-2">
+                        <button onClick={() => setIsRecurring(false)} className={`flex-1 py-2 text-[11px] font-bold rounded-full transition-hero ${!isRecurring ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>Único</button>
+                        <button onClick={() => setIsRecurring(true)} className={`flex-1 py-2 text-[11px] font-bold rounded-full transition-hero ${isRecurring ? 'bg-slate-100 dark:bg-slate-700 text-brand-pink shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>Recorrência</button>
+                    </div>
+
                     <input className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="O que está sendo pago? (ex: Mensalidade)" value={desc} onChange={e => setDesc(e.target.value)} />
+                    
                     <div className="grid grid-cols-2 gap-3">
                          <input className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="Plano" value={plan} onChange={e => setPlan(e.target.value)} />
                          <select className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" value={method} onChange={e => setMethod(e.target.value)}>
@@ -65,27 +127,48 @@ const PaymentReceipt: React.FC = () => {
                             <option value="Dinheiro">Dinheiro</option>
                          </select>
                     </div>
+
+                    {isRecurring && (
+                        <div className="grid grid-cols-2 gap-3 p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div>
+                                <label className="label-field">Início (Mês Ref.)</label>
+                                <input type="date" className="input-hero bg-slate-50 dark:bg-slate-800 border-none" value={dateStart} onChange={e => setDateStart(e.target.value)} />
+                            </div>
+                            <div>
+                                <label className="label-field">Até quando?</label>
+                                <input type="date" className="input-hero bg-slate-50 dark:bg-slate-800 border-none" value={dateEnd} onChange={e => setDateEnd(e.target.value)} />
+                            </div>
+                        </div>
+                    )}
+
                     <CurrencyInput className="input-hero bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" placeholder="Valor (R$)" value={val} onChange={setVal} />
-                    <button onClick={addItem} className="w-full bg-slate-900 dark:bg-slate-700 text-white py-4 rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition shadow-lg">Adicionar à Lista</button>
+                    
+                    <button onClick={addItem} className="w-full bg-slate-900 dark:bg-slate-700 text-white py-4 rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition shadow-lg">
+                        {isRecurring ? 'Gerar Lote de Itens' : 'Adicionar à Lista'}
+                    </button>
                 </div>
 
                 <div className="mb-8 space-y-3">
-                    {items.length > 0 ? items.map((item, idx) => (
-                         <div key={item.id} className="flex items-center p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-brand-pink/30 dark:hover:border-brand-pink/30 transition-hero group">
-                             <div className="flex flex-col gap-1 mr-4 shrink-0">
-                                 <button onClick={() => moveItem(idx, 'up')} disabled={idx === 0} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▲</button>
-                                 <button onClick={() => moveItem(idx, 'down')} disabled={idx === items.length - 1} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▼</button>
-                             </div>
-                             <div className="flex-1 min-w-0 pr-2">
-                                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{item.descricao}</p>
-                                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">{item.plano || 'Geral'} • {item.formaPagamento}</p>
-                             </div>
-                             <div className="text-right ml-2 mr-4">
-                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formatMoney(item.valor)}</p>
-                             </div>
-                             <button onClick={() => setItems(items.filter(it => it.id !== item.id))} className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 transition-hero opacity-0 group-hover:opacity-100">✕</button>
-                         </div>
-                    )) : (
+                    {items.length > 0 ? (
+                        <div className="max-h-72 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+                            {items.map((item, idx) => (
+                                <div key={item.id} className="flex items-center p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-brand-pink/30 dark:hover:border-brand-pink/30 transition-hero group">
+                                    <div className="flex flex-col gap-1 mr-4 shrink-0">
+                                        <button onClick={() => moveItem(idx, 'up')} disabled={idx === 0} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▲</button>
+                                        <button onClick={() => moveItem(idx, 'down')} disabled={idx === items.length - 1} className="w-6 h-6 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-brand-pink dark:hover:text-brand-pink disabled:opacity-0 transition-hero">▼</button>
+                                    </div>
+                                    <div className="flex-1 min-w-0 pr-2">
+                                        <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{item.descricao}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">{item.plano || 'Geral'} • {item.formaPagamento}</p>
+                                    </div>
+                                    <div className="text-right ml-2 mr-4">
+                                        <p className="text-sm font-black text-slate-900 dark:text-white">{formatMoney(item.valor)}</p>
+                                    </div>
+                                    <button onClick={() => setItems(items.filter(it => it.id !== item.id))} className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 transition-hero opacity-0 group-hover:opacity-100">✕</button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
                         <div className="text-center p-10 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 dark:text-slate-600">
                              <p className="text-xs font-bold uppercase tracking-widest">Lista vazia</p>
                         </div>

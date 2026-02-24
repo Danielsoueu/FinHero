@@ -44,3 +44,10 @@ export enum TabId {
     PAGAMENTO = 'pagamento',
     NEGOCIACAO = 'negociacao'
 }
+
+export interface CancellationItem {
+    id: string;
+    service: string;
+    date: string;
+    value: number;
+}
