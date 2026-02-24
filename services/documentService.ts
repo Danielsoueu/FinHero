@@ -25,14 +25,13 @@ export const downloadElementAsImage = async (elementId: string, fileName: string
     }
 };
 
-export const printElement = (elementId: string) => {
+export const printElement = (elementId: string, title: string = 'Documento') => {
     const element = document.getElementById(elementId);
     if (!element) return;
 
     // We open a new window to print cleanly
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-        // We can't use toast here easily without context, but this is a browser restriction fallback
         alert('Por favor, permita popups para imprimir.');
         return;
     }
@@ -41,7 +40,7 @@ export const printElement = (elementId: string) => {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Imprimir Documento</title>
+            <title>${title}</title>
             <script src="https://cdn.tailwindcss.com"></script>
             <style>
                 body { font-family: 'Inter', sans-serif; padding: 40px; -webkit-print-color-adjust: exact; }

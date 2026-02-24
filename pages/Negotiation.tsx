@@ -85,7 +85,7 @@ const Negotiation: React.FC = () => {
                 </div>
             </div>
 
-            <PreviewCard contentId="neg-preview" hasContent={showResult}>
+            <PreviewCard contentId="neg-preview" hasContent={showResult} clientName={client}>
                  {company && (
                      <div className="flex flex-col gap-6 text-sm font-sans h-full">
                          <div className="flex flex-col items-center pb-6 border-b border-slate-100">
@@ -143,7 +143,7 @@ const Negotiation: React.FC = () => {
                          </div>
 
                          <div className="text-center text-[10px] text-slate-400 mt-2 italic">
-                             {t('neg.doc_validity_text')}
+                             {t('common.doc_generated')}
                          </div>
                      </div>
                  )}

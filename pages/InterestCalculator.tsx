@@ -292,7 +292,7 @@ const InterestCalculator: React.FC = () => {
                 </div>
             </div>
 
-            <PreviewCard contentId="juros-preview" hasContent={showResult}>
+            <PreviewCard contentId="juros-preview" hasContent={showResult} clientName={clientName}>
                 {company && (
                     <div className="flex flex-col gap-6 text-sm">
                         <div className="flex flex-col items-center border-b-2 border-slate-100 pb-8">
@@ -328,7 +328,7 @@ const InterestCalculator: React.FC = () => {
                             <span className="text-sm font-bold opacity-70">Total para Quitação</span>
                             <span className="text-3xl font-black">{formatCurrency(items.reduce((a, b) => a + b.devido, 0))}</span>
                         </div>
-                        <p className="text-center text-[10px] text-slate-400 font-medium italic">Documento gerado eletronicamente para fins informativos.</p>
+                        <p className="text-center text-[10px] text-slate-400 mt-2">{t('common.doc_generated')}</p>
                     </div>
                 )}
             </PreviewCard>

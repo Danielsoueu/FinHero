@@ -59,7 +59,7 @@ const CancellationProof: React.FC = () => {
                 </div>
             </div>
 
-            <PreviewCard contentId="cancel-preview" hasContent={showResult}>
+            <PreviewCard contentId="cancel-preview" hasContent={showResult} clientName={client}>
                 {company && (
                     <div className="flex flex-col gap-8 text-sm font-sans h-full justify-between">
                         <div>
@@ -104,7 +104,7 @@ const CancellationProof: React.FC = () => {
                             }}
                         >
                              <p className="font-bold text-lg tracking-widest text-brand-pink" style={{ color: '#E6007E' }}>{t('cancel.doc_title')}</p>
-                             <p className="text-xs mt-2 opacity-80" style={{ color: '#94a3b8' }}>{t('cancel.doc_footer')}</p>
+                             <p className="text-xs mt-2 opacity-80" style={{ color: '#94a3b8' }}>{t('common.doc_generated')}</p>
                         </div>
                     </div>
                 )}

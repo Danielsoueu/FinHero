@@ -8,9 +8,10 @@ interface PreviewCardProps {
     title?: string;
     contentId: string;
     hasContent: boolean;
+    clientName?: string;
 }
 
-const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, hasContent }) => {
+const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, hasContent, clientName }) => {
     const { t } = useLanguage();
     const { addToast } = useToast();
     const displayTitle = title || t('common.preview');
@@ -23,10 +24,19 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, h
         );
     };
 
+    const handlePrint = () => {
+        const safeClientName = clientName && clientName.trim() ? clientName.trim() : 'FinHero';
+        const docTitle = `Documento - ${safeClientName}`;
+        printElement(contentId, docTitle);
+    };
+
     const handleDownload = () => {
+        const safeClientName = clientName && clientName.trim() ? clientName.trim().replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'finhero';
+        const fileName = `documento-${safeClientName}.jpg`;
+
         downloadElementAsImage(
             contentId, 
-            'documento-finhero.jpg',
+            fileName,
             () => addToast('Download iniciado!', 'success'),
             () => addToast('Erro ao gerar imagem.', 'error')
         );
@@ -71,7 +81,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, h
                         <span className="hidden sm:inline">{t('common.copy')}</span>
                     </button>
                     <button 
-                        onClick={() => printElement(contentId)}
+                        onClick={handlePrint}
                         className="py-3 px-4 bg-brand-dark dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 group"
                     >
                         <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>

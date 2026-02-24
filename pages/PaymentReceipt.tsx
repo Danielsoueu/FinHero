@@ -115,7 +115,7 @@ const PaymentReceipt: React.FC = () => {
                 </div>
             </div>
 
-            <PreviewCard contentId="receipt-preview" hasContent={showResult}>
+            <PreviewCard contentId="receipt-preview" hasContent={showResult} clientName={client}>
                  {company && (
                      <div className="flex flex-col gap-8 font-sans">
                          <div className="flex justify-between items-start border-b-4 border-slate-900 pb-8">
@@ -181,10 +181,8 @@ const PaymentReceipt: React.FC = () => {
                                  <p className="font-black text-slate-900 text-base">{company.nome}</p>
                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Quitação Eletrônica</p>
                              </div>
-                             <div className="ml-auto text-[10px] text-slate-400 max-w-[220px] text-right italic leading-relaxed">
-                                 Declaramos para os devidos fins que recebemos a importância supra, dando plena e geral quitação de todos os itens listados.
-                             </div>
                          </div>
+                         <p className="text-center text-[10px] text-slate-400 mt-4">{t('common.doc_generated')}</p>
                      </div>
                  )}
             </PreviewCard>
