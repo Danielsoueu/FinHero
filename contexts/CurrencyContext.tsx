@@ -15,6 +15,7 @@ const currencies: Currency[] = [
     { code: 'ARS', symbol: '$', locale: 'es-AR', name: 'Peso (Argentina)', decimals: 2 },
     { code: 'PYG', symbol: '₲', locale: 'es-PY', name: 'Guarani (Paraguai)', decimals: 0 },
     { code: 'EUR', symbol: '€', locale: 'de-DE', name: 'Euro (Europa)', decimals: 2 },
+    { code: 'PEN', symbol: 'S/', locale: 'es-PE', name: 'Sol (Peru)', decimals: 2 },
 ];
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);

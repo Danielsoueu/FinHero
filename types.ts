@@ -1,6 +1,6 @@
 export type Language = 'pt' | 'en' | 'es';
 
-export type CurrencyCode = 'BRL' | 'USD' | 'CLP' | 'ARS' | 'PYG' | 'EUR';
+export type CurrencyCode = 'BRL' | 'USD' | 'CLP' | 'ARS' | 'PYG' | 'EUR' | 'PEN';
 
 export interface Currency {
     code: CurrencyCode;

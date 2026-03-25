@@ -54,7 +54,7 @@ const CurrencySwitcher = ({ className }: { className?: string }) => {
             >
                 {currencies.map((c) => (
                     <option key={c.code} value={c.code} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-                        {c.symbol} {c.code}
+                        {c.name} ({c.symbol} {c.code})
                     </option>
                 ))}
             </select>
