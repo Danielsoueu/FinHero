@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TabId } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
@@ -43,11 +44,13 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
     return (
         <LanguageProvider>
-            <ToastProvider>
-                <ThemeProvider>
-                    <AppContent />
-                </ThemeProvider>
-            </ToastProvider>
+            <CurrencyProvider>
+                <ToastProvider>
+                    <ThemeProvider>
+                        <AppContent />
+                    </ThemeProvider>
+                </ToastProvider>
+            </CurrencyProvider>
         </LanguageProvider>
     );
 };

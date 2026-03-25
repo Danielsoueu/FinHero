@@ -3,9 +3,11 @@ import { Company, InvoiceItem } from '../types';
 import CompanySelector from '../components/CompanySelector';
 import PreviewCard from '../components/PreviewCard';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const Negotiation: React.FC = () => {
     const { t } = useLanguage();
+    const { formatMoney } = useCurrency();
     const [company, setCompany] = useState<Company | null>(null);
     const [client, setClient] = useState('');
     const [discount, setDiscount] = useState('');
@@ -30,7 +32,6 @@ const Negotiation: React.FC = () => {
     const total = items.reduce((s, i) => s + i.valor, 0);
     const discAmount = total * ((parseFloat(discount) || 0) / 100);
     const finalAmount = total - discAmount;
-    const formatMoney = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

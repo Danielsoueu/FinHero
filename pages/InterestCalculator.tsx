@@ -6,10 +6,12 @@ import PreviewCard from '../components/PreviewCard';
 import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const InterestCalculator: React.FC = () => {
     const { t } = useLanguage();
     const { addToast } = useToast();
+    const { formatMoney } = useCurrency();
     
     const [company, setCompany] = useState<Company | null>(null);
     const [clientName, setClientName] = useState('');
@@ -192,8 +194,6 @@ const InterestCalculator: React.FC = () => {
 
     const resetForm = () => { setTitle(''); setValue(''); setEditingId(null); setDateDue(''); setDateEnd(''); setDiscount(''); setIsPaid(false); setDatePaid(''); };
 
-    const formatCurrency = (val: number) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-hero border border-slate-100 dark:border-slate-800 transition-colors">
@@ -274,7 +274,7 @@ const InterestCalculator: React.FC = () => {
                                             <span className="font-bold text-sm text-slate-900 dark:text-white truncate">{item.titulo}</span>
                                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">({item.dataVencimento.split('-').reverse().join('/')})</span>
                                         </div>
-                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">{formatCurrency(item.valorOriginal)} • <span className={item.status === 'Vencida' ? 'text-red-500' : 'text-emerald-500'}>{item.status}</span></p>
+                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">{formatMoney(item.valorOriginal)} • <span className={item.status === 'Vencida' ? 'text-red-500' : 'text-emerald-500'}>{item.status}</span></p>
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => handleEdit(item)} className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-brand-pink hover:border-brand-pink transition-hero flex items-center justify-center">✎</button>
@@ -314,11 +314,11 @@ const InterestCalculator: React.FC = () => {
                                     </div>
                                     <div className="grid grid-cols-2 gap-y-2 text-xs pl-2 text-slate-600">
                                         <span>Vencimento</span><span className="text-right font-bold text-slate-900">{item.dataVencimento.split('-').reverse().join('/')}</span>
-                                        <span>Valor Original</span><span className="text-right font-bold text-slate-900">{formatCurrency(item.valorOriginal)}</span>
-                                        {item.diasAtraso > 0 && <><span>Multas/Juros ({item.diasAtraso}d)</span><span className="text-right text-red-600 font-bold">+{formatCurrency(item.multa + item.juros)}</span></>}
-                                        {item.desconto > 0 && <><span>Descontos</span><span className="text-right text-emerald-600 font-bold">-{formatCurrency(item.desconto)}</span></>}
+                                        <span>Valor Original</span><span className="text-right font-bold text-slate-900">{formatMoney(item.valorOriginal)}</span>
+                                        {item.diasAtraso > 0 && <><span>Multas/Juros ({item.diasAtraso}d)</span><span className="text-right text-red-600 font-bold">+{formatMoney(item.multa + item.juros)}</span></>}
+                                        {item.desconto > 0 && <><span>Descontos</span><span className="text-right text-emerald-600 font-bold">-{formatMoney(item.desconto)}</span></>}
                                         <div className="col-span-2 border-t border-slate-100 mt-2 pt-2 flex justify-between font-black text-slate-900 text-sm">
-                                            <span>Subtotal</span><span>{formatCurrency(item.devido)}</span>
+                                            <span>Subtotal</span><span>{formatMoney(item.devido)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -326,7 +326,7 @@ const InterestCalculator: React.FC = () => {
                         </div>
                         <div className="p-8 rounded-[1.5rem] flex justify-between items-center bg-slate-900 text-white shadow-lg">
                             <span className="text-sm font-bold opacity-70">Total para Quitação</span>
-                            <span className="text-3xl font-black">{formatCurrency(items.reduce((a, b) => a + b.devido, 0))}</span>
+                            <span className="text-3xl font-black">{formatMoney(items.reduce((a, b) => a + b.devido, 0))}</span>
                         </div>
                         <p className="text-center text-[10px] text-slate-400 mt-2">{t('common.doc_generated')}</p>
                     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { TabId, Language } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -20,17 +21,17 @@ const Icons = {
     Moon: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
 };
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({ className }: { className?: string }) => {
     const { language, setLanguage } = useLanguage();
     const languages: { id: Language; label: string }[] = [{ id: 'pt', label: 'PT' }, { id: 'en', label: 'EN' }, { id: 'es', label: 'ES' }];
 
     return (
-        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-full p-1 gap-1 border border-slate-200 dark:border-slate-700 self-start">
+        <div className={`flex bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-1 gap-1 border border-slate-200 dark:border-slate-700 shadow-sm ${className}`}>
             {languages.map((lang) => (
                 <button
                     key={lang.id}
                     onClick={() => setLanguage(lang.id)}
-                    className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all duration-200 ${
+                    className={`flex-1 px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all duration-200 ${
                         language === lang.id ? 'bg-brand-pink text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
                     }`}
                 >
@@ -41,12 +42,35 @@ const LanguageSwitcher = () => {
     );
 };
 
+const CurrencySwitcher = ({ className }: { className?: string }) => {
+    const { currency, setCurrency, currencies } = useCurrency();
+
+    return (
+        <div className={`relative group ${className}`}>
+            <select
+                value={currency.code}
+                onChange={(e) => setCurrency(e.target.value as any)}
+                className="appearance-none w-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-xl pl-3 pr-8 py-2 border border-slate-200 dark:border-slate-700 outline-none hover:border-brand-pink dark:hover:border-brand-pink transition-all cursor-pointer shadow-sm"
+            >
+                {currencies.map((c) => (
+                    <option key={c.code} value={c.code} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                        {c.symbol} {c.code}
+                    </option>
+                ))}
+            </select>
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-brand-pink transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+        </div>
+    );
+};
+
 const ThemeToggle = () => {
     const { theme, toggleTheme } = useTheme();
     return (
         <button 
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-brand-pink dark:hover:text-brand-pink border border-slate-200 dark:border-slate-700 transition-colors"
+            className="p-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-500 dark:text-slate-400 hover:text-brand-pink dark:hover:text-brand-pink border border-slate-200 dark:border-slate-700 transition-all shadow-sm hover:scale-105 active:scale-95"
             title="Toggle Dark Mode"
         >
             {theme === 'dark' ? <Icons.Sun /> : <Icons.Moon />}
@@ -70,14 +94,17 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
         <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans transition-colors duration-300">
             {/* Desktop Sidebar */}
             <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-shrink-0 hidden md:flex flex-col relative z-20">
-                <div className="p-8 pb-6 flex flex-col gap-6">
+                <div className="p-6 pb-4 flex flex-col gap-5">
                     <div className="flex items-center gap-2 group cursor-pointer" onClick={() => onTabChange(TabId.HOME)}>
                         <div className="h-8 w-1.5 bg-brand-pink rounded-full transition-hero group-hover:scale-y-110"></div>
                         <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">FinHero</h1>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <LanguageSwitcher />
-                        <ThemeToggle />
+                    <div className="space-y-3">
+                        <LanguageSwitcher className="w-full" />
+                        <div className="flex items-center gap-2">
+                            <CurrencySwitcher className="flex-1" />
+                            <ThemeToggle />
+                        </div>
                     </div>
                 </div>
                 
@@ -115,14 +142,15 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
 
             {/* Content */}
             <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-                <header className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 md:hidden px-6 py-4 flex items-center justify-between shrink-0 z-30 sticky top-0">
+                <header className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 md:hidden px-4 py-3 flex items-center justify-between shrink-0 z-30 sticky top-0">
                     <div className="flex items-center gap-2" onClick={() => onTabChange(TabId.HOME)}>
                          <div className="h-6 w-1 bg-brand-pink rounded-full"></div>
                          <h1 className="text-lg font-black text-slate-900 dark:text-white">FinHero</h1>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <ThemeToggle />
+                    <div className="flex items-center gap-2">
                         <LanguageSwitcher />
+                        <CurrencySwitcher />
+                        <ThemeToggle />
                     </div>
                 </header>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 interface CardProps {
     title: string;
@@ -37,11 +38,12 @@ const CalculatorCard: React.FC<CardProps> = ({ title, children, result, onCalc, 
 
 const PercentageCalculator: React.FC = () => {
     const { t } = useLanguage();
+    const { formatMoney } = useCurrency();
 
     // Calc 1: X% of Y
     const [c1_p, setC1_p] = useState('');
     const [c1_v, setC1_v] = useState('');
-    const [res1, setRes1] = useState<string>('0.00');
+    const [res1, setRes1] = useState<number>(0);
 
     // Calc 2: X is what % of Y
     const [c2_v1, setC2_v1] = useState('');
@@ -55,7 +57,7 @@ const PercentageCalculator: React.FC = () => {
 
     const handleCalc1 = () => {
         const p = parseFloat(c1_p), v = parseFloat(c1_v);
-        if (!isNaN(p) && !isNaN(v)) setRes1((v * (p / 100)).toFixed(2));
+        if (!isNaN(p) && !isNaN(v)) setRes1(v * (p / 100));
     };
 
     const handleCalc2 = () => {
@@ -85,9 +87,9 @@ const PercentageCalculator: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <CalculatorCard 
                     title={t('porc.c1_title')} 
-                    result={`$ ${res1}`} 
+                    result={formatMoney(res1)} 
                     onCalc={handleCalc1} 
-                    onClear={() => { setC1_p(''); setC1_v(''); setRes1('0.00'); }}
+                    onClear={() => { setC1_p(''); setC1_v(''); setRes1(0); }}
                     icon="%"
                     t={t}
                 >

@@ -5,10 +5,12 @@ import PreviewCard from '../components/PreviewCard';
 import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const CancellationProof: React.FC = () => {
     const { t } = useLanguage();
     const { addToast } = useToast();
+    const { formatMoney } = useCurrency();
     
     const [company, setCompany] = useState<Company | null>(null);
     const [clientName, setClientName] = useState('');
@@ -122,8 +124,6 @@ const CancellationProof: React.FC = () => {
         setDateEnd(''); 
     };
 
-    const formatCurrency = (val: number) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-hero border border-slate-100 dark:border-slate-800 transition-colors">
@@ -179,7 +179,7 @@ const CancellationProof: React.FC = () => {
                                             <span className="font-bold text-sm text-slate-900 dark:text-white truncate">{item.service}</span>
                                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">({item.date.split('-').reverse().join('/')})</span>
                                         </div>
-                                        {item.value > 0 && <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">{formatCurrency(item.value)}</p>}
+                                        {item.value > 0 && <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">{formatMoney(item.value)}</p>}
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => handleEdit(item)} className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-brand-pink hover:border-brand-pink transition-hero flex items-center justify-center">✎</button>
@@ -224,7 +224,7 @@ const CancellationProof: React.FC = () => {
                                         <p className="font-bold text-slate-900 text-base">{item.service}</p>
                                         <p className="text-xs text-slate-500 mt-1">Cancelado em: {item.date.split('-').reverse().join('/')}</p>
                                     </div>
-                                    {item.value > 0 && <span className="font-bold text-slate-900">{formatCurrency(item.value)}</span>}
+                                    {item.value > 0 && <span className="font-bold text-slate-900">{formatMoney(item.value)}</span>}
                                 </div>
                             ))}
                         </div>

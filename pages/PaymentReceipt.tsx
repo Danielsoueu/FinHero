@@ -5,10 +5,12 @@ import PreviewCard from '../components/PreviewCard';
 import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const PaymentReceipt: React.FC = () => {
     const { t } = useLanguage();
     const { addToast } = useToast();
+    const { formatMoney } = useCurrency();
     const [company, setCompany] = useState<Company | null>(null);
     const [client, setClient] = useState('');
     const [date, setDate] = useState('');
@@ -91,8 +93,6 @@ const PaymentReceipt: React.FC = () => {
         [newItems[index], newItems[swapWith]] = [newItems[swapWith], newItems[index]];
         setItems(newItems);
     };
-
-    const formatMoney = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

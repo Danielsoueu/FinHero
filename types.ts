@@ -1,5 +1,15 @@
 export type Language = 'pt' | 'en' | 'es';
 
+export type CurrencyCode = 'BRL' | 'USD' | 'CLP' | 'ARS' | 'PYG' | 'EUR';
+
+export interface Currency {
+    code: CurrencyCode;
+    symbol: string;
+    locale: string;
+    name: string;
+    decimals: number;
+}
+
 export interface Company {
     id: 'empresaA' | 'empresaB';
     nome: string;
