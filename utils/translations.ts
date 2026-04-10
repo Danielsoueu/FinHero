@@ -9,6 +9,7 @@ export const translations = {
             cancelamento: 'Cancelamento',
             pagamento: 'Recibo Pagto.',
             negociacao: 'Negociação',
+            cupons: 'Cupons',
             workspace: 'Área de Trabalho'
         },
         dashboard: {
@@ -16,6 +17,15 @@ export const translations = {
             subtitle: 'Selecione uma aplicação abaixo para iniciar suas tarefas.',
             footer_help: 'Precisa de ajuda?',
             footer_support: 'Suporte Técnico',
+            welcome: 'Bem-vindo de volta, Herói!',
+            welcome_desc: 'Sua central financeira está pronta. Todas as ferramentas de cálculo e emissão de documentos estão a um clique de distância.',
+            available_tools: 'Ferramentas Disponíveis',
+            stats: {
+                title: 'Resumo de Hoje',
+                calculations: 'Cálculos',
+                documents: 'Documentos',
+                active_time: 'Tempo Ativo'
+            },
             apps: {
                 juros_label: 'Juros e Multa',
                 juros_desc: 'Cálculo financeiro de atrasos',
@@ -26,7 +36,9 @@ export const translations = {
                 pag_label: 'Recibo Pagto.',
                 pag_desc: 'Emitir recibo com múltiplos itens',
                 neg_label: 'Negociação',
-                neg_desc: 'Proposta de acordo e quitação'
+                neg_desc: 'Proposta de acordo e quitação',
+                cupons_label: 'Cupons',
+                cupons_desc: 'Códigos de desconto rápidos'
             }
         },
         common: {
@@ -134,7 +146,7 @@ export const translations = {
         neg: {
             title: 'Proposta de Negociação',
             add_debt_title: 'Adicionar Débito',
-            invoice_placeholder: 'Fatura (ex: Março/2024)',
+            invoice_placeholder: 'Fatura (ex: Março/2026)',
             val_placeholder: 'Valor',
             add_list_btn: '+ Inserir na Lista',
             no_debts: 'Nenhum débito adicionado',
@@ -145,6 +157,15 @@ export const translations = {
             doc_discount: 'Desconto',
             doc_final_val: 'Valor Final para Quitação',
             doc_validity_text: 'Esta proposta tem validade de 3 dias úteis a partir da data de hoje.'
+        },
+        cupons: {
+            title: 'Cupons de Desconto',
+            subtitle: 'Clique nos códigos para copiar instantaneamente.',
+            col_finance: 'Financeiro / Hero OS',
+            col_discount: 'Desconto',
+            col_iugu: 'Iugu (Código + Descrição)',
+            copied: 'Copiado!',
+            copy_error: 'Erro ao copiar'
         }
     },
     en: {
@@ -155,6 +176,7 @@ export const translations = {
             cancelamento: 'Cancellation',
             pagamento: 'Payment Receipt',
             negociacao: 'Negotiation',
+            cupons: 'Coupons',
             workspace: 'Workspace'
         },
         dashboard: {
@@ -162,6 +184,15 @@ export const translations = {
             subtitle: 'Select an application below to start your tasks.',
             footer_help: 'Need help?',
             footer_support: 'Tech Support',
+            welcome: 'Welcome back, Hero!',
+            welcome_desc: 'Your financial hub is ready. All calculation and document issuance tools are just a click away.',
+            available_tools: 'Available Tools',
+            stats: {
+                title: 'Today\'s Summary',
+                calculations: 'Calculations',
+                documents: 'Documents',
+                active_time: 'Active Time'
+            },
             apps: {
                 juros_label: 'Interest & Fines',
                 juros_desc: 'Financial delay calculations',
@@ -172,7 +203,9 @@ export const translations = {
                 pag_label: 'Payment Receipt',
                 pag_desc: 'Issue multi-item receipts',
                 neg_label: 'Negotiation',
-                neg_desc: 'Settlement and agreement proposals'
+                neg_desc: 'Settlement and agreement proposals',
+                cupons_label: 'Coupons',
+                cupons_desc: 'Quick discount codes'
             }
         },
         common: {
@@ -280,7 +313,7 @@ export const translations = {
         neg: {
             title: 'Negotiation Proposal',
             add_debt_title: 'Add Debt',
-            invoice_placeholder: 'Invoice (e.g. March/2024)',
+            invoice_placeholder: 'Invoice (e.g. March/2026)',
             val_placeholder: 'Value',
             add_list_btn: '+ Add to List',
             no_debts: 'No debts added',
@@ -291,6 +324,15 @@ export const translations = {
             doc_discount: 'Discount',
             doc_final_val: 'Final Settlement Value',
             doc_validity_text: 'This proposal is valid for 3 business days from today.'
+        },
+        cupons: {
+            title: 'Discount Coupons',
+            subtitle: 'Click on the codes to copy instantly.',
+            col_finance: 'Finance / Hero OS',
+            col_discount: 'Discount',
+            col_iugu: 'Iugu (Code + Description)',
+            copied: 'Copied!',
+            copy_error: 'Error copying'
         }
     },
     es: {
@@ -301,6 +343,7 @@ export const translations = {
             cancelamento: 'Cancelación',
             pagamento: 'Recibo de Pago',
             negociacao: 'Negociación',
+            cupons: 'Cupones',
             workspace: 'Espacio de Trabajo'
         },
         dashboard: {
@@ -308,6 +351,15 @@ export const translations = {
             subtitle: 'Seleccione una aplicación abajo para comenzar.',
             footer_help: '¿Necesitas ayuda?',
             footer_support: 'Soporte Técnico',
+            welcome: '¡Bienvenido de nuevo, Héroe!',
+            welcome_desc: 'Tu centro financiero está listo. Todas las herramientas de cálculo y emisión de documentos están a un clic de distancia.',
+            available_tools: 'Herramientas Disponíveis',
+            stats: {
+                title: 'Resumen de Hoy',
+                calculations: 'Cálculos',
+                documents: 'Documentos',
+                active_time: 'Tiempo Activo'
+            },
             apps: {
                 juros_label: 'Intereses y Multas',
                 juros_desc: 'Cálculo financiero de retrasos',
@@ -318,7 +370,9 @@ export const translations = {
                 pag_label: 'Recibo de Pago',
                 pag_desc: 'Emitir recibo con múltiples ítems',
                 neg_label: 'Negociación',
-                neg_desc: 'Propuesta de acuerdo y liquidación'
+                neg_desc: 'Propuesta de acuerdo y liquidación',
+                cupons_label: 'Cupones',
+                cupons_desc: 'Códigos de descuento rápidos'
             }
         },
         common: {
@@ -426,7 +480,7 @@ export const translations = {
         neg: {
             title: 'Propuesta de Negociación',
             add_debt_title: 'Agregar Deuda',
-            invoice_placeholder: 'Factura (ej: Marzo/2024)',
+            invoice_placeholder: 'Factura (ej: Marzo/2026)',
             val_placeholder: 'Valor',
             add_list_btn: '+ Insertar en Lista',
             no_debts: 'Ninguna deuda agregada',
@@ -437,6 +491,15 @@ export const translations = {
             doc_discount: 'Descuento',
             doc_final_val: 'Valor Final para Liquidación',
             doc_validity_text: 'Esta propuesta es válida por 3 días hábiles a partir de hoy.'
+        },
+        cupons: {
+            title: 'Cupones de Descuento',
+            subtitle: 'Haga clic en los códigos para copiarlos al instante.',
+            col_finance: 'Financiero / Hero OS',
+            col_discount: 'Descuento',
+            col_iugu: 'Iugu (Código + Descripción)',
+            copied: '¡Copiado!',
+            copy_error: 'Error al copiar'
         }
     }
 };

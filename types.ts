@@ -52,7 +52,8 @@ export enum TabId {
     PORCENTAGEM = 'porcentagem',
     CANCELAMENTO = 'cancelamento',
     PAGAMENTO = 'pagamento',
-    NEGOCIACAO = 'negociacao'
+    NEGOCIACAO = 'negociacao',
+    CUPONS = 'cupons'
 }
 
 export interface CancellationItem {

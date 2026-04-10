@@ -11,6 +11,7 @@ import PercentageCalculator from './pages/PercentageCalculator';
 import CancellationProof from './pages/CancellationProof';
 import PaymentReceipt from './pages/PaymentReceipt';
 import Negotiation from './pages/Negotiation';
+import Coupons from './pages/Coupons';
 
 const AppContent: React.FC = () => {
     const [activeTab, setActiveTab] = useState<TabId>(TabId.HOME);
@@ -29,6 +30,8 @@ const AppContent: React.FC = () => {
                 return <PaymentReceipt />;
             case TabId.NEGOCIACAO:
                 return <Negotiation />;
+            case TabId.CUPONS:
+                return <Coupons />;
             default:
                 return <Dashboard onNavigate={setActiveTab} />;
         }
