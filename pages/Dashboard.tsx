@@ -13,6 +13,7 @@ import {
 import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import Clock from '../components/Clock';
+import IuguStatus from '../components/IuguStatus';
 
 interface DashboardProps {
     onNavigate: (tab: TabId) => void;
@@ -78,7 +79,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                         {t('dashboard.subtitle')}
                     </p>
                 </div>
-                <Clock />
+                <div className="flex items-center gap-4">
+                    <IuguStatus />
+                    <Clock />
+                </div>
             </div>
 
             {/* Grid Area */}
