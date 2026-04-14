@@ -8,6 +8,19 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 
+const getSafeDate = (dateString: string) => {
+    if (!dateString) return new Date();
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0);
+};
+
+const formatDateToISO = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
 const InterestCalculator: React.FC = () => {
     const { t } = useLanguage();
     const { addToast } = useToast();
@@ -27,22 +40,9 @@ const InterestCalculator: React.FC = () => {
     const [value, setValue] = useState<number | ''>(''); 
     const [dateDue, setDateDue] = useState('');
     const [dateEnd, setDateEnd] = useState('');
-    const [datePaid, setDatePaid] = useState('');
+    const [datePaid, setDatePaid] = useState(formatDateToISO(new Date()));
     const [isPaid, setIsPaid] = useState(false);
     const [discount, setDiscount] = useState('');
-
-    const getSafeDate = (dateString: string) => {
-        if (!dateString) return new Date();
-        const [year, month, day] = dateString.split('-').map(Number);
-        return new Date(year, month - 1, day, 12, 0, 0);
-    };
-
-    const formatDateToISO = (date: Date) => {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    };
 
     const calculateItemValues = (
         valOriginal: number, 
@@ -184,15 +184,29 @@ const InterestCalculator: React.FC = () => {
     };
 
     const handleEdit = (item: DebtItem) => {
-        setEditingId(item.id); setTitle(item.titulo); setValue(item.valorOriginal);
-        setDateDue(item.dataVencimento); setDatePaid(item.dataPagamento);
-        setIsPaid(item.status === 'Pago' || item.status === 'Paid');
+        setEditingId(item.id); 
+        setTitle(item.titulo); 
+        setValue(item.valorOriginal);
+        setDateDue(item.dataVencimento); 
+        setDatePaid(item.dataPagamento || formatDateToISO(new Date()));
+        setIsPaid(item.status === t('juros.status_paid'));
         const dPerc = item.desconto > 0 ? ((item.desconto / item.total) * 100).toFixed(2) : '';
-        setDiscount(dPerc); setIsRecurring(false); setDateEnd('');
+        setDiscount(dPerc); 
+        setIsRecurring(false); 
+        setDateEnd('');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const resetForm = () => { setTitle(''); setValue(''); setEditingId(null); setDateDue(''); setDateEnd(''); setDiscount(''); setIsPaid(false); setDatePaid(''); };
+    const resetForm = () => { 
+        setTitle(''); 
+        setValue(''); 
+        setEditingId(null); 
+        setDateDue(''); 
+        setDateEnd(''); 
+        setDiscount(''); 
+        setIsPaid(false); 
+        setDatePaid(formatDateToISO(new Date())); 
+    };
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -238,24 +252,30 @@ const InterestCalculator: React.FC = () => {
                         <input className="input-hero" placeholder={t('juros.title_placeholder')} value={title} onChange={e => setTitle(e.target.value)} />
                         <CurrencyInput className="input-hero" placeholder={t('juros.val_placeholder')} value={value} onChange={setValue} />
                         
+                        {!isRecurring && (
+                            <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                                <input type="checkbox" id="paid-chk" checked={isPaid} onChange={e => setIsPaid(e.target.checked)} className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-brand-pink focus:ring-brand-pink bg-white dark:bg-slate-800 cursor-pointer" />
+                                <label htmlFor="paid-chk" className="text-xs font-bold text-slate-600 dark:text-slate-400 cursor-pointer">{t('juros.is_paid')}</label>
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-4">
-                            <div><label className="label-field">Vencimento</label><input type="date" className="input-hero" value={dateDue} onChange={e => setDateDue(e.target.value)} /></div>
+                            <div><label className="label-field">{t('juros.due_date')}</label><input type="date" className="input-hero" value={dateDue} onChange={e => setDateDue(e.target.value)} /></div>
                             {isRecurring ? (
                                 <div><label className="label-field">Até quando?</label><input type="date" className="input-hero" value={dateEnd} onChange={e => setDateEnd(e.target.value)} /></div>
                             ) : (
-                                <div><label className="label-field">Já pago em?</label><input type="date" className="input-hero" value={datePaid} onChange={e => setDatePaid(e.target.value)} /></div>
+                                <div>
+                                    <label className="label-field">{isPaid ? t('juros.paid_date') : t('juros.calc_date')}</label>
+                                    <input type="date" className="input-hero" value={datePaid} onChange={e => setDatePaid(e.target.value)} />
+                                </div>
                             )}
                         </div>
 
                         {!isRecurring && (
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="label-field">Desconto %</label>
+                                    <label className="label-field">{t('juros.discount')}</label>
                                     <input className="input-hero" type="number" placeholder="%" value={discount} onChange={e => setDiscount(e.target.value)} />
-                                </div>
-                                <div className="flex items-center gap-3 pt-5">
-                                    <input type="checkbox" id="paid-chk" checked={isPaid} onChange={e => setIsPaid(e.target.checked)} className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-brand-pink focus:ring-brand-pink bg-white dark:bg-slate-800" />
-                                    <label htmlFor="paid-chk" className="text-xs font-bold text-slate-600 dark:text-slate-400">Já está pago?</label>
                                 </div>
                             </div>
                         )}
@@ -274,7 +294,13 @@ const InterestCalculator: React.FC = () => {
                                             <span className="font-bold text-sm text-slate-900 dark:text-white truncate">{item.titulo}</span>
                                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">({item.dataVencimento.split('-').reverse().join('/')})</span>
                                         </div>
-                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">{formatMoney(item.valorOriginal)} • <span className={item.status === 'Vencida' ? 'text-red-500' : 'text-emerald-500'}>{item.status}</span></p>
+                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                                            {formatMoney(item.valorOriginal)} • 
+                                            <span className={item.status === t('juros.status_overdue') ? 'text-red-500' : 'text-emerald-500'}> {item.status}</span>
+                                            {item.status === t('juros.status_paid') && item.dataPagamento && (
+                                                <span className="text-slate-400 dark:text-slate-500"> ({item.dataPagamento.split('-').reverse().join('/')})</span>
+                                            )}
+                                        </p>
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => handleEdit(item)} className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-brand-pink hover:border-brand-pink transition-hero flex items-center justify-center">✎</button>
@@ -313,8 +339,11 @@ const InterestCalculator: React.FC = () => {
                                         <span className={`text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider ${item.status === 'Vencida' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{item.status}</span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-y-2 text-xs pl-2 text-slate-600">
-                                        <span>Vencimento</span><span className="text-right font-bold text-slate-900">{item.dataVencimento.split('-').reverse().join('/')}</span>
-                                        <span>Valor Original</span><span className="text-right font-bold text-slate-900">{formatMoney(item.valorOriginal)}</span>
+                                        <span>{t('juros.due_date')}</span><span className="text-right font-bold text-slate-900">{item.dataVencimento.split('-').reverse().join('/')}</span>
+                                        {item.dataPagamento && item.status === t('juros.status_paid') && (
+                                            <><span>{t('juros.paid_date')}</span><span className="text-right font-bold text-slate-900">{item.dataPagamento.split('-').reverse().join('/')}</span></>
+                                        )}
+                                        <span>{t('juros.label_original')}</span><span className="text-right font-bold text-slate-900">{formatMoney(item.valorOriginal)}</span>
                                         {item.diasAtraso > 0 && <><span>Multas/Juros ({item.diasAtraso}d)</span><span className="text-right text-red-600 font-bold">+{formatMoney(item.multa + item.juros)}</span></>}
                                         {item.desconto > 0 && <><span>Descontos</span><span className="text-right text-emerald-600 font-bold">-{formatMoney(item.desconto)}</span></>}
                                         <div className="col-span-2 border-t border-slate-100 mt-2 pt-2 flex justify-between font-black text-slate-900 text-sm">
