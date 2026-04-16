@@ -1,17 +1,18 @@
 import React from 'react';
-import { Ticket, Copy, Check } from 'lucide-react';
+import { Ticket, Copy, Check, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 
 const Coupons: React.FC = () => {
     const { t } = useLanguage();
-    const { showToast } = useToast();
+    const { addToast } = useToast();
     const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
     const coupons = [
         { finance: 'RETEMHERO5', discount: '5%', iugu: 'CP-A51DE0 | Desconto 5% - Desconto - Retenção' },
         { finance: 'RETEMHERO10', discount: '10%', iugu: 'CP-9CB108 | Desconto 10% - Desconto - Renovação' },
         { finance: 'RETEMHERO15', discount: '15%', iugu: 'CP-686412 | Desconto 15% - Desconto - Renovação' },
+        { finance: 'RETEMHERO20', discount: '20%', iugu: 'CP-DCF794 | Desconto 20% - Desconto - Renovação' },
         { finance: 'RETEMHERO25', discount: '25%', iugu: 'CP-6DADF1 | Desconto 25% - Desconto - Renovação' },
         { finance: 'RETEMHERO30', discount: '30%', iugu: 'CP-A59AD5 | Desconto 30% - Desconto - Renovação' },
         { finance: 'RETEMHERO35', discount: '35%', iugu: 'CP-CD0CD4 | Desconto 35% - Desconto - Renovação' },
@@ -20,10 +21,10 @@ const Coupons: React.FC = () => {
     const handleCopy = (text: string, id: string) => {
         navigator.clipboard.writeText(text).then(() => {
             setCopiedId(id);
-            showToast(t('cupons.copied'), 'success');
+            addToast(t('cupons.copied'), 'success');
             setTimeout(() => setCopiedId(null), 2000);
         }).catch(() => {
-            showToast(t('cupons.copy_error'), 'error');
+            addToast(t('cupons.copy_error'), 'error');
         });
     };
 
@@ -89,10 +90,10 @@ const Coupons: React.FC = () => {
 
             <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/20 rounded-2xl">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                    <Ticket size={20} />
+                    <AlertTriangle size={20} />
                 </div>
-                <p className="text-sm text-amber-800 dark:text-amber-200/80 font-medium">
-                    {t('cupons.subtitle')}
+                <p className="text-sm text-amber-800 dark:text-amber-200/80 font-bold italic">
+                    {t('cupons.not_recurring')}
                 </p>
             </div>
         </div>

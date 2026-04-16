@@ -166,7 +166,8 @@ export const translations = {
             col_discount: 'Desconto',
             col_iugu: 'Iugu (Código + Descrição)',
             copied: 'Copiado!',
-            copy_error: 'Erro ao copiar'
+            copy_error: 'Erro ao copiar',
+            not_recurring: 'Importante: Estes cupons não são recorrentes.'
         }
     },
     en: {
@@ -334,7 +335,8 @@ export const translations = {
             col_discount: 'Discount',
             col_iugu: 'Iugu (Code + Description)',
             copied: 'Copied!',
-            copy_error: 'Error copying'
+            copy_error: 'Error copying',
+            not_recurring: 'Important: These coupons are not recurring.'
         }
     },
     es: {
@@ -502,7 +504,8 @@ export const translations = {
             col_discount: 'Descuento',
             col_iugu: 'Iugu (Código + Descripción)',
             copied: '¡Copiado!',
-            copy_error: 'Error al copiar'
+            copy_error: 'Error al copiar',
+            not_recurring: 'Importante: Estos cupones no son recurrentes.'
         }
     }
 };
