@@ -44,12 +44,14 @@ const CnpjLookup: React.FC = () => {
                 .replace(/\bpref\b/g, 'prefeito')
                 .replace(/\bdr\b/g, 'doutor')
                 .replace(/\bcj\b/g, 'conjunto')
-                .replace(/\bsl\b/g, 'sala');
+                .replace(/\bsal\b|\bsl\b/g, 'sala');
         };
 
         const normalize = (str: string) => {
             let s = clean(str);
             s = expandAbbreviations(s);
+            // Remove leading zeros from any number sequences (e.g., 00414 -> 414)
+            s = s.replace(/\b0+(\d+)/g, '$1');
             // Remove everything that isn't alphanumeric for final comparison
             return s.replace(/[^a-z0-9]/g, '');
         };
