@@ -11,8 +11,10 @@ async function startServer() {
   const PORT = 3000;
 
   // Proxy endpoint for CNPJ to avoid CORS/Network issues in the browser
-  app.get('/api/cnpj/:cnpj', async (req, res) => {
-    const cnpj = req.params.cnpj;
+  app.get('/api/cnpj', async (req, res) => {
+    const cnpj = req.query.cnpj as string;
+    if (!cnpj) return res.status(400).json({ error: 'CNPJ é obrigatório' });
+
     console.log(`[CNPJ Search] Requesting data for: ${cnpj}`);
     
     try {

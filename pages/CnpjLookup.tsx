@@ -86,7 +86,7 @@ const CnpjLookup: React.FC = () => {
         setData(null);
 
         try {
-            const response = await fetch(`/api/cnpj/${cnpjLimpo}`);
+            const response = await fetch(`/api/cnpj?cnpj=${cnpjLimpo}`);
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || t('cnpj.error_not_found'));
