@@ -10,6 +10,8 @@ export const translations = {
             pagamento: 'Recibo Pagto.',
             negociacao: 'Negociação',
             cupons: 'Cupons',
+            cnpj: 'Consulta CNPJ',
+            enderecos: 'Unidades',
             workspace: 'Área de Trabalho'
         },
         dashboard: {
@@ -38,7 +40,11 @@ export const translations = {
                 neg_label: 'Negociação',
                 neg_desc: 'Proposta de acordo e quitação',
                 cupons_label: 'Cupons',
-                cupons_desc: 'Códigos de desconto rápidos'
+                cupons_desc: 'Códigos de desconto rápidos',
+                cnpj_label: 'Consulta CNPJ',
+                cnpj_desc: 'Dados completos de empresas',
+                enderecos_label: 'Unidades',
+                enderecos_desc: 'Nossos endereços e unidades'
             }
         },
         common: {
@@ -168,6 +174,38 @@ export const translations = {
             copied: 'Copiado!',
             copy_error: 'Erro ao copiar',
             not_recurring: 'Importante: Estes cupons não são recorrentes.'
+        },
+        cnpj: {
+            title: 'Consulta Completa de CNPJ',
+            subtitle: 'Busque dados cadastrais de qualquer empresa pelo CNPJ.',
+            placeholder: '00.000.000/0000-00',
+            button: 'Buscar Dados',
+            searching: 'Buscando...',
+            error_length: 'Digite um CNPJ válido com 14 números.',
+            error_not_found: 'CNPJ não encontrado.',
+            error_generic: 'Erro ao buscar dados.',
+            label_razao: 'Razão Social',
+            label_fantasia: 'Nome Fantasia',
+            label_porte: 'Enquadramento (Porte)',
+            label_status: 'Status da Empresa',
+            label_endereco: 'Endereço',
+            label_contato: 'Contato',
+            no_fantasia: 'Não possui nome fantasia',
+            no_info: 'Não informado',
+            no_tel: 'Sem telefone',
+            our_address: 'Unidade Detectada!',
+            our_address_desc: 'Este endereço pertence a uma de nossas unidades oficiais.'
+        },
+        enderecos: {
+            title: 'Nossas Unidades',
+            subtitle: 'Encontre nossos endereços em todo o Brasil e no mundo.',
+            search_placeholder: 'Buscar por cidade, estado ou endereço...',
+            no_results: 'Nenhuma unidade encontrada para sua busca.',
+            label_address: 'Endereço',
+            label_cep: 'CEP',
+            label_type: 'Tipo de Unidade',
+            type_propria: 'Própria',
+            type_parceria: 'Parceria'
         }
     },
     en: {
@@ -179,6 +217,8 @@ export const translations = {
             pagamento: 'Payment Receipt',
             negociacao: 'Negotiation',
             cupons: 'Coupons',
+            cnpj: 'CNPJ Lookup',
+            enderecos: 'Locations',
             workspace: 'Workspace'
         },
         dashboard: {
@@ -207,7 +247,11 @@ export const translations = {
                 neg_label: 'Negotiation',
                 neg_desc: 'Settlement and agreement proposals',
                 cupons_label: 'Coupons',
-                cupons_desc: 'Quick discount codes'
+                cupons_desc: 'Quick discount codes',
+                cnpj_label: 'CNPJ Lookup',
+                cnpj_desc: 'Complete company data',
+                enderecos_label: 'Locations',
+                enderecos_desc: 'Our addresses and units'
             }
         },
         common: {
@@ -337,6 +381,38 @@ export const translations = {
             copied: 'Copied!',
             copy_error: 'Error copying',
             not_recurring: 'Important: These coupons are not recurring.'
+        },
+        cnpj: {
+            title: 'Complete CNPJ Lookup',
+            subtitle: 'Search registration data of any company by CNPJ.',
+            placeholder: '00.000.000/0000-00',
+            button: 'Search Data',
+            searching: 'Searching...',
+            error_length: 'Enter a valid CNPJ with 14 numbers.',
+            error_not_found: 'CNPJ not found.',
+            error_generic: 'Error fetching data.',
+            label_razao: 'Legal Name',
+            label_fantasia: 'Trade Name',
+            label_porte: 'Size (Porte)',
+            label_status: 'Company Status',
+            label_endereco: 'Address',
+            label_contato: 'Contact',
+            no_fantasia: 'No trade name',
+            no_info: 'Not informed',
+            no_tel: 'No phone',
+            our_address: 'Unit Detected!',
+            our_address_desc: 'This address belongs to one of our official units.'
+        },
+        enderecos: {
+            title: 'Our Locations',
+            subtitle: 'Find our addresses across Brazil and the world.',
+            search_placeholder: 'Search by city, state or address...',
+            no_results: 'No units found for your search.',
+            label_address: 'Address',
+            label_cep: 'Zip Code',
+            label_type: 'Unit Type',
+            type_propria: 'Own',
+            type_parceria: 'Partnership'
         }
     },
     es: {
@@ -348,6 +424,8 @@ export const translations = {
             pagamento: 'Recibo de Pago',
             negociacao: 'Negociación',
             cupons: 'Cupones',
+            cnpj: 'Consulta CNPJ',
+            enderecos: 'Unidades',
             workspace: 'Espacio de Trabajo'
         },
         dashboard: {
@@ -376,7 +454,11 @@ export const translations = {
                 neg_label: 'Negociación',
                 neg_desc: 'Propuesta de acuerdo y liquidación',
                 cupons_label: 'Cupones',
-                cupons_desc: 'Códigos de descuento rápidos'
+                cupons_desc: 'Códigos de descuento rápidos',
+                cnpj_label: 'Consulta CNPJ',
+                cnpj_desc: 'Datos completos de empresas',
+                enderecos_label: 'Unidades',
+                enderecos_desc: 'Nuestras direcciones y unidades'
             }
         },
         common: {
@@ -506,6 +588,38 @@ export const translations = {
             copied: '¡Copiado!',
             copy_error: 'Error al copiar',
             not_recurring: 'Importante: Estos cupones no son recurrentes.'
+        },
+        cnpj: {
+            title: 'Consulta Completa de CNPJ',
+            subtitle: 'Busque datos de registro de cualquier empresa por CNPJ.',
+            placeholder: '00.000.000/0000-00',
+            button: 'Buscar Datos',
+            searching: 'Buscando...',
+            error_length: 'Ingrese um CNPJ válido con 14 números.',
+            error_not_found: 'CNPJ no encontrado.',
+            error_generic: 'Error al buscar datos.',
+            label_razao: 'Razón Social',
+            label_fantasia: 'Nombre Fantasía',
+            label_porte: 'Tamaño (Porte)',
+            label_status: 'Estado de la Empresa',
+            label_endereco: 'Dirección',
+            label_contato: 'Contacto',
+            no_fantasia: 'No posee nombre fantasía',
+            no_info: 'No informado',
+            no_tel: 'Sin teléfono',
+            our_address: '¡Unidad FinHero Detectada!',
+            our_address_desc: 'Esta es una de nuestras direcciones oficiales.'
+        },
+        enderecos: {
+            title: 'Nuestras Unidades',
+            subtitle: 'Encuentre nuestras direcciones en todo Brasil y el mundo.',
+            search_placeholder: 'Buscar por ciudad, estado o dirección...',
+            no_results: 'No se encontraron unidades para su búsqueda.',
+            label_address: 'Dirección',
+            label_cep: 'Código Postal',
+            label_type: 'Tipo de Unidad',
+            type_propria: 'Propia',
+            type_parceria: 'Asociada'
         }
     }
 };

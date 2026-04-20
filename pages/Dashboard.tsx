@@ -8,7 +8,9 @@ import {
     ArrowRight, 
     HelpCircle, 
     MessageSquare,
-    Ticket
+    Ticket,
+    Search,
+    MapPin
 } from 'lucide-react';
 import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -64,6 +66,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             desc: t('dashboard.apps.cupons_desc'),
             color: 'text-brand-pink bg-brand-pink/5 dark:bg-brand-pink/10',
             icon: <Ticket size={24} />
+        },
+        {
+            id: TabId.CNPJ,
+            label: t('dashboard.apps.cnpj_label'),
+            desc: t('dashboard.apps.cnpj_desc'),
+            color: 'text-cyan-500 bg-cyan-50 dark:bg-cyan-500/10',
+            icon: <Search size={24} />
+        },
+        {
+            id: TabId.ENDERECOS,
+            label: t('dashboard.apps.enderecos_label'),
+            desc: t('dashboard.apps.enderecos_desc'),
+            color: 'text-orange-500 bg-orange-50 dark:bg-orange-500/10',
+            icon: <MapPin size={24} />
         }
     ];
 

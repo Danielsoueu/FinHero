@@ -12,6 +12,8 @@ import CancellationProof from './pages/CancellationProof';
 import PaymentReceipt from './pages/PaymentReceipt';
 import Negotiation from './pages/Negotiation';
 import Coupons from './pages/Coupons';
+import CnpjLookup from './pages/CnpjLookup';
+import Addresses from './pages/Addresses';
 
 const AppContent: React.FC = () => {
     const [activeTab, setActiveTab] = useState<TabId>(TabId.HOME);
@@ -32,6 +34,10 @@ const AppContent: React.FC = () => {
                 return <Negotiation />;
             case TabId.CUPONS:
                 return <Coupons />;
+            case TabId.CNPJ:
+                return <CnpjLookup />;
+            case TabId.ENDERECOS:
+                return <Addresses />;
             default:
                 return <Dashboard onNavigate={setActiveTab} />;
         }

@@ -53,7 +53,9 @@ export enum TabId {
     CANCELAMENTO = 'cancelamento',
     PAGAMENTO = 'pagamento',
     NEGOCIACAO = 'negociacao',
-    CUPONS = 'cupons'
+    CUPONS = 'cupons',
+    CNPJ = 'cnpj',
+    ENDERECOS = 'enderecos'
 }
 
 export interface CancellationItem {
