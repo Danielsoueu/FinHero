@@ -30,25 +30,53 @@ const CnpjLookup: React.FC = () => {
     const isOurUnit = useMemo(() => {
         if (!data) return null;
 
-        const normalize = (str: string) => str.toLowerCase().replace(/\s/g, '').replace(/[^\w]/g, '');
+        const clean = (str: string) => {
+            return str.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+                .replace(/\s+/g, ' ') // Collapse spaces
+                .trim();
+        };
+
+        const expandAbbreviations = (str: string) => {
+            return str
+                .replace(/\bav\b|\bave\b/g, 'avenida')
+                .replace(/\br\b/g, 'rua')
+                .replace(/\bpref\b/g, 'prefeito')
+                .replace(/\bdr\b/g, 'doutor')
+                .replace(/\bcj\b/g, 'conjunto')
+                .replace(/\bsl\b/g, 'sala');
+        };
+
+        const normalize = (str: string) => {
+            let s = clean(str);
+            s = expandAbbreviations(s);
+            // Remove everything that isn't alphanumeric for final comparison
+            return s.replace(/[^a-z0-9]/g, '');
+        };
+
         const dataCep = data.cep.replace(/\D/g, '');
         const dataStreet = normalize(data.logradouro);
         const dataNum = normalize(data.numero);
 
         // 1. Try physical match first (Street AND Number) - Most precise
-        // We look for units whose address description matches BOTH the street name and the building number
+        // We check if the unit address contains the normalized street name AND the number
         const physicalMatch = units.find(u => {
             const unitAddr = normalize(u.address);
+            // Check if street name is part of unit address (e.g., "osmarcunha" in "avenidaprefeitoosmarcunha")
             return unitAddr.includes(dataStreet) && unitAddr.includes(dataNum);
         });
 
         if (physicalMatch) return physicalMatch;
 
-        // 2. Fallback to CEP match - checking if it's the same street to be safe
+        // 2. Fallback to CEP match - more lenient verification
         return units.find(u => {
             const unitCep = u.cep ? u.cep.replace(/\D/g, '') : '';
+            if (unitCep !== dataCep) return false;
+            
+            // If CEP matches, check if the street name even vaguely matches
             const unitAddr = normalize(u.address);
-            return unitCep === dataCep && unitAddr.includes(dataStreet);
+            // A common street fragment should match
+            return unitAddr.includes(dataStreet) || dataStreet.includes(unitAddr.substring(0, 5));
         });
     }, [data]);
 
