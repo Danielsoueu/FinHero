@@ -44,7 +44,12 @@ const CnpjLookup: React.FC = () => {
                 .replace(/\bpref\b/g, 'prefeito')
                 .replace(/\bdr\b/g, 'doutor')
                 .replace(/\bcj\b/g, 'conjunto')
-                .replace(/\bsal\b|\bsl\b/g, 'sala');
+                .replace(/\bsal\b|\bsl\b/g, 'sala')
+                .replace(/\bqd\b|\bq\b/g, 'quadra')
+                .replace(/\blt\b/g, 'lote')
+                .replace(/\bbl\b/g, 'bloco')
+                .replace(/\bent\b/g, 'entrada')
+                .replace(/\bpav\b|\bpavmto\b/g, 'pavimento');
         };
 
         const normalize = (str: string) => {
@@ -52,20 +57,22 @@ const CnpjLookup: React.FC = () => {
             s = expandAbbreviations(s);
             // Remove leading zeros from any number sequences (e.g., 00414 -> 414)
             s = s.replace(/\b0+(\d+)/g, '$1');
+            // Remove "sn" or "sem numero" to avoid noise
+            s = s.replace(/\bsn\b|\bsemnumero\b/g, '');
             // Remove everything that isn't alphanumeric for final comparison
             return s.replace(/[^a-z0-9]/g, '');
         };
 
         const dataCep = data.cep.replace(/\D/g, '');
         const dataStreet = normalize(data.logradouro);
-        const dataNum = normalize(data.numero);
+        const dataNum = normalize(data.numero || '');
+        const dataLogradouroCompleto = normalize(`${data.logradouro} ${data.numero}`);
 
         // 1. Try physical match first (Street AND Number) - Most precise
         // We check if the unit address contains the normalized street name AND the number
         const physicalMatch = units.find(u => {
             const unitAddr = normalize(u.address);
-            // Check if street name is part of unit address (e.g., "osmarcunha" in "avenidaprefeitoosmarcunha")
-            return unitAddr.includes(dataStreet) && unitAddr.includes(dataNum);
+            return unitAddr.includes(dataStreet) && (dataNum === '' || unitAddr.includes(dataNum));
         });
 
         if (physicalMatch) return physicalMatch;
@@ -75,10 +82,15 @@ const CnpjLookup: React.FC = () => {
             const unitCep = u.cep ? u.cep.replace(/\D/g, '') : '';
             if (unitCep !== dataCep) return false;
             
-            // If CEP matches, check if the street name even vaguely matches
+            // If CEP matches, check if the logradouro matches or if the building number/quadra is present
             const unitAddr = normalize(u.address);
-            // A common street fragment should match
-            return unitAddr.includes(dataStreet) || dataStreet.includes(unitAddr.substring(0, 5));
+            
+            // Checks:
+            // a) Street part matches
+            // b) Or the data has a number that exists in the unit address
+            return unitAddr.includes(dataStreet) || 
+                   dataStreet.includes(unitAddr.substring(0, 5)) ||
+                   (dataNum !== '' && unitAddr.includes(dataNum));
         });
     }, [data]);
 
