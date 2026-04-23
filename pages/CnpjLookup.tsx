@@ -199,6 +199,11 @@ const CnpjLookup: React.FC = () => {
                                     <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-500/80">
                                         {t('cnpj.our_address_desc')} — <span className="font-black underline decoration-2 underline-offset-4">{isOurUnit.name}</span>
                                     </p>
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <div className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${isOurUnit.hasRoom ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
+                                            {isOurUnit.hasRoom ? t('cnpj.room_yes') : t('cnpj.room_no')}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}

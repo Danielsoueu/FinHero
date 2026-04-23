@@ -1,22 +1,36 @@
 import React, { useState, useMemo } from 'react';
-import { Search, MapPin, Building2, Globe, Navigation } from 'lucide-react';
+import { Search, MapPin, Building2, Globe, Navigation, Filter, Layers, CheckCircle2, XCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { units, Unit } from '../constants/units';
 
 const Addresses: React.FC = () => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterType, setFilterType] = useState<'all' | 'Própria' | 'Parceria'>('all');
+    const [filterRoom, setFilterRoom] = useState<'all' | 'yes' | 'no'>('all');
+    const [filterRegion, setFilterRegion] = useState<string>('all');
+
+    const regions = useMemo(() => {
+        const uniqueRegions = Array.from(new Set(units.map(u => u.region)));
+        return uniqueRegions.sort();
+    }, []);
 
     const filteredUnits = useMemo(() => {
-        if (!searchTerm) return units;
-        const lowerSearch = searchTerm.toLowerCase();
-        return units.filter(unit => 
-            unit.name.toLowerCase().includes(lowerSearch) || 
-            unit.address.toLowerCase().includes(lowerSearch) || 
-            unit.region.toLowerCase().includes(lowerSearch) ||
-            (unit.cep && unit.cep.includes(lowerSearch))
-        );
-    }, [searchTerm]);
+        return units.filter(unit => {
+            const matchesSearch = !searchTerm || (
+                unit.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                unit.address.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                unit.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (unit.cep && unit.cep.includes(searchTerm))
+            );
+
+            const matchesType = filterType === 'all' || unit.type === filterType;
+            const matchesRoom = filterRoom === 'all' || (filterRoom === 'yes' ? unit.hasRoom : !unit.hasRoom);
+            const matchesRegion = filterRegion === 'all' || unit.region === filterRegion;
+
+            return matchesSearch && matchesType && matchesRoom && matchesRegion;
+        });
+    }, [searchTerm, filterType, filterRoom, filterRegion]);
 
     const groupedUnits = useMemo(() => {
         const groups: { [key: string]: Unit[] } = {};
@@ -51,6 +65,101 @@ const Addresses: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-2xl pl-12 pr-4 py-3.5 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-pink dark:focus:border-brand-pink outline-none transition-all shadow-sm"
                     />
+                </div>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                        <Filter size={18} className="text-brand-pink" />
+                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Filtros Avançados</h4>
+                    </div>
+                    {(filterType !== 'all' || filterRoom !== 'all' || filterRegion !== 'all' || searchTerm !== '') && (
+                        <button 
+                            onClick={() => {
+                                setFilterType('all');
+                                setFilterRoom('all');
+                                setFilterRegion('all');
+                                setSearchTerm('');
+                            }}
+                            className="text-[10px] font-black uppercase tracking-widest text-brand-pink hover:underline"
+                        >
+                            Limpar Filtros
+                        </button>
+                    )}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Tipo de Unidade</label>
+                        <div className="flex bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-100 dark:border-slate-700">
+                            {[
+                                { id: 'all', label: 'Todas' },
+                                { id: 'Própria', label: 'Próprias' },
+                                { id: 'Parceria', label: 'Parcerias' }
+                            ].map(opt => (
+                                <button
+                                    key={opt.id}
+                                    onClick={() => setFilterType(opt.id as any)}
+                                    className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                                        filterType === opt.id 
+                                            ? 'bg-brand-pink text-white shadow-lg shadow-brand-pink/20' 
+                                            : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+                                    }`}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Serviço (IE)</label>
+                        <div className="flex bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-100 dark:border-slate-700">
+                            {[
+                                { id: 'all', label: 'Todos' },
+                                { id: 'yes', label: 'Sala (IE)' },
+                                { id: 'no', label: 'Fiscal' }
+                            ].map(opt => (
+                                <button
+                                    key={opt.id}
+                                    onClick={() => setFilterRoom(opt.id as any)}
+                                    className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                                        filterRoom === opt.id 
+                                            ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' 
+                                            : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+                                    }`}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Região</label>
+                        <div className="relative">
+                            <select
+                                value={filterRegion}
+                                onChange={(e) => setFilterRegion(e.target.value)}
+                                className="w-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer pr-10"
+                            >
+                                <option value="all">Todas as Regiões</option>
+                                {regions.map(r => (
+                                    <option key={r} value={r}>{r}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <Globe size={14} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-2 flex items-center gap-2">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        {filteredUnits.length} {filteredUnits.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+                    </span>
                 </div>
             </div>
 
@@ -90,6 +199,13 @@ const Addresses: React.FC = () => {
                                                             : 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
                                                     }`}>
                                                         {unit.type === 'Própria' ? t('enderecos.type_propria') : t('enderecos.type_parceria')}
+                                                    </span>
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                                                        unit.hasRoom
+                                                            ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200/50'
+                                                            : 'bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-500'
+                                                    }`}>
+                                                        {unit.hasRoom ? 'SALA (IE)' : 'FISCAL'}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2 mt-1">
