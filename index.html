@@ -10,28 +10,28 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Asap', 'Inter', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            pink: '#E6007E', // Company Hero Pink
-                            hover: '#C2006B',
-                            dark: '#0F172A', 
-                            light: '#F8FAFC',
+                            pink: '#FF0066', // Company Hero Electric Rose (#FF0066)
+                            hover: '#E6005C',
+                            dark: '#101828', // Obsidian Black (#101828)
+                            light: '#F3F3F3', // Chalk White (#F3F3F3)
                             slate: '#1E293B',
-                            hero: '#FF008A'
+                            hero: '#FF0066'
                         }
                     },
                     boxShadow: {
                         'hero': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
-                        'glow': '0 0 20px rgba(230, 0, 126, 0.2)',
+                        'glow': '0 0 20px rgba(255, 0, 102, 0.2)',
                         'glow-emerald': '0 0 20px rgba(16, 185, 129, 0.3)',
                         'floating': '0 12px 30px -10px rgba(0,0,0,0.1)'
                     },
@@ -59,7 +59,7 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         body { background-color: #F8FAFC; }
-        .dark body { background-color: #020617; }
+        .dark body { background-color: #0d121f; }
         .transition-hero { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 <script type="importmap">
