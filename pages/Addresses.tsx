@@ -359,8 +359,8 @@ const Addresses: React.FC = () => {
             {/* HIGH-FIDELITY Unit Details Overlay (Ficha técnica) */}
             {selectedUnit && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-2xl flex flex-col w-full max-w-4xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                        {/* Elegant Header with Electric Rose */}
+                    <div className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-2xl flex flex-col w-full max-w-lg max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        {/* Header */}
                         <div className="bg-brand-pink text-white p-6 relative overflow-hidden shrink-0">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl" />
                             <div className="flex items-start justify-between relative z-10">
@@ -375,12 +375,9 @@ const Addresses: React.FC = () => {
                                             {selectedUnit.status}
                                         </span>
                                     </div>
-                                    <h3 className="text-2xl font-black font-sans uppercase tracking-tight leading-none mt-1">
+                                    <h3 className="text-xl font-black font-sans uppercase tracking-tight leading-none mt-1">
                                         {selectedUnit.name}
                                     </h3>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-white/80 leading-relaxed font-sans mt-0.5">
-                                        {selectedUnit.condo || 'Condomínio ou Edifício Associado'}
-                                    </p>
                                 </div>
                                 <button 
                                     onClick={() => setSelectedUnit(null)}
@@ -392,162 +389,58 @@ const Addresses: React.FC = () => {
                         </div>
 
                         {/* Detailed sheets */}
-                        <div className="p-8 overflow-y-auto space-y-6">
+                        <div className="p-6 overflow-y-auto space-y-6">
                             
-                            {/* Two Column Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* GENERAL INFORMATION PANEL */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-850">
+                                    <Info size={14} className="text-brand-pink" />
+                                    Informações Gerais
+                                </h4>
                                 
-                                {/* GENERAL INFORMATION PANEL */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-850">
-                                        <Info size={14} className="text-brand-pink" />
-                                        Informações Gerais
-                                    </h4>
-                                    
-                                    <div className="space-y-3 text-xs leading-relaxed">
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <span className="font-semibold text-slate-400">Endereço:</span>
-                                            <span className="col-span-2 font-bold text-slate-900 dark:text-slate-100">{selectedUnit.address}</span>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <span className="font-semibold text-slate-400">CEP:</span>
-                                            <span className="col-span-2 font-bold text-slate-900 dark:text-slate-100 font-mono">{selectedUnit.cep || 'N/A'}</span>
-                                        </div>
-                                        {selectedUnit.complement && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">Complemento:</span>
-                                                <span className="col-span-2 font-bold text-slate-900 dark:text-slate-100">{selectedUnit.complement}</span>
-                                            </div>
-                                        )}
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <span className="font-semibold text-slate-400">Inscrição Estadual (IE):</span>
-                                            <span className="col-span-2">
-                                                <span className={`px-2 py-0.5 rounded text-[10px] font-black ${
-                                                    selectedUnit.hasRoom 
-                                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/20' 
-                                                        : 'bg-slate-105 text-slate-500 dark:bg-slate-850'
-                                                }`}>
-                                                    {selectedUnit.hasRoom ? 'Habilitada (Possui Sala)' : 'Não elegível (Apenas Fiscal)'}
-                                                </span>
+                                <div className="space-y-4 text-xs leading-relaxed">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-4 py-1">
+                                        <span className="font-semibold text-slate-400">Endereço:</span>
+                                        <span className="md:col-span-2 font-bold text-slate-900 dark:text-slate-100">
+                                            {selectedUnit.address}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-4 py-1 border-t border-slate-50 dark:border-slate-850/50 pt-3">
+                                        <span className="font-semibold text-slate-400">CEP:</span>
+                                        <span className="md:col-span-2 font-bold text-slate-900 dark:text-slate-100 font-mono">
+                                            {selectedUnit.cep || 'N/A'}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-4 py-1 border-t border-slate-50 dark:border-slate-850/50 pt-3">
+                                        <span className="font-semibold text-slate-400">Inscrição Estadual (IE):</span>
+                                        <span className="md:col-span-2">
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black inline-block ${
+                                                selectedUnit.hasRoom 
+                                                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/20' 
+                                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800'
+                                            }`}>
+                                                {selectedUnit.hasRoom ? 'Habilitada (Possui Sala)' : 'Não elegível (Apenas Fiscal)'}
                                             </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* CONTRACT PARAMETERS */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-850">
-                                        <Calendar size={14} className="text-blue-500" />
-                                        Financeiro e Contrato
-                                    </h4>
-
-                                    <div className="space-y-3 text-xs leading-relaxed">
-                                        {selectedUnit.contractStart && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">Início:</span>
-                                                <span className="col-span-2 font-bold text-slate-900 dark:text-slate-100">{selectedUnit.contractStart}</span>
-                                            </div>
-                                        )}
-                                        {selectedUnit.gracePeriod && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">Carência:</span>
-                                                <span className="col-span-2 font-bold text-slate-500">{selectedUnit.gracePeriod}</span>
-                                            </div>
-                                        )}
-                                        {selectedUnit.rent && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">Valor Aluguel:</span>
-                                                <span className="col-span-2 font-black text-brand-pink font-mono">{selectedUnit.rent}</span>
-                                            </div>
-                                        )}
-                                        {selectedUnit.iptu && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">IPTU rate:</span>
-                                                <span className="col-span-2 font-bold text-slate-500 font-mono">{selectedUnit.iptu}</span>
-                                            </div>
-                                        )}
-                                        {selectedUnit.insurance && (
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <span className="font-semibold text-slate-400">Seguro Incêndio:</span>
-                                                <span className="col-span-2 text-slate-900 dark:text-slate-100">
-                                                    <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 dark:bg-blue-900/20 font-black text-[9px] uppercase tracking-wider">
-                                                        Contratado
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* OPERATIONAL PARAMETERS AND CHECKLIST */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                                
-                                {/* OPERATIONAL CHECKLIST */}
-                                <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-850">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-3">
-                                        <ListTodo size={14} className="text-emerald-500" />
-                                        Status Operational Checklist
-                                    </h4>
-                                    
-                                    <div className="space-y-2.5">
-                                        {[
-                                            { task: 'Abrir estrutura cadastral da pasta', resp: 'BackOffice', done: true },
-                                            { task: 'Inserir versão do contrato no drive', resp: 'BackOffice', done: true },
-                                            { task: 'Assinatura digital válida do contrato', resp: 'Liderança', done: true },
-                                            { task: 'Cadastro financeiro para repasse/faturas', resp: 'Faturamento', done: selectedUnit.status === 'Ativo' },
-                                            { task: 'Verificação física na prefeitura e IPTUs', resp: 'Operações', done: selectedUnit.hasRoom }
-                                        ].map((todo, idx) => (
-                                            <div key={idx} className="flex items-start justify-between text-[11px] gap-2">
-                                                <div className="flex gap-2 items-start">
-                                                    {todo.done ? (
-                                                        <CheckCircle2 size={12} className="text-emerald-500 mt-0.5 shrink-0" />
-                                                    ) : (
-                                                        <div className="w-3 h-3 rounded-full border-2 border-slate-300 mt-0.5 shrink-0" />
-                                                    )}
-                                                    <span className={`font-semibold ${todo.done ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`}>
-                                                        {todo.task}
-                                                    </span>
-                                                </div>
-                                                <span className="font-mono text-[9px] text-slate-400 font-bold shrink-0">{todo.resp}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* RULES AND CAUTIONS */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                        <ShieldCheck size={14} className="text-brand-pink" />
-                                        Instruções de Correspondência
-                                    </h4>
-                                    <div className="p-4 bg-brand-pink/5 border border-brand-pink/10 rounded-2xl space-y-2">
-                                        <div className="flex gap-2 items-start">
-                                            <AlertTriangle size={14} className="text-brand-pink mt-0.5 shrink-0" />
-                                            <p className="text-[11px] font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">
-                                                {selectedUnit.mailboxRequired 
-                                                    ? 'Obs Importante: Todo cliente nesta unidade exige obrigatoriamente a contratação ou indicação de caixa postal no contrato comercial.'
-                                                    : 'Unidade aceita tráfego padrão de correspondência. Notificação ao cliente é disparada sob recebimento.'
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold italic leading-none pl-1">
-                                        <Info size={10} />
-                                        Portfólio atualizado de acordo com o Brandbook de 2026.
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Footer action */}
-                        <div className="p-6 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-850 flex justify-end shrink-0">
+                        <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-850 flex justify-end shrink-0 gap-2">
+                            <button 
+                                onClick={() => setSelectedUnit(null)}
+                                className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-all"
+                            >
+                                Fechar
+                            </button>
                             <button 
                                 onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedUnit.address + (selectedUnit.cep ? ' ' + selectedUnit.cep : ''))}`, '_blank')}
-                                className="px-5 py-2.5 bg-brand-pink text-white rounded-xl text-xs font-black font-sans uppercase tracking-widest shadow-glow hover:bg-brand-pink/90 transition-all flex items-center gap-2"
+                                className="px-4 py-2 bg-brand-pink text-white rounded-xl text-xs font-black font-sans uppercase tracking-widest shadow-glow hover:bg-brand-pink/90 transition-all flex items-center gap-1.5"
                             >
-                                <Navigation size={14} />
-                                Abrir Localização Completa no Maps
+                                <Navigation size={12} />
+                                Ver no Maps
                             </button>
                         </div>
                     </div>
