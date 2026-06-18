@@ -61,58 +61,106 @@ const CnpjLookup: React.FC = () => {
 
     // Helper: Clean and check if unit matches
     const checkIfOurUnit = (cnpjData: CnpjData) => {
-        const clean = (str: string) => {
+        const normalizeText = (str: string) => {
             return str.toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
-                .replace(/\s+/g, ' ') // Collapse spaces
+                .normalize('NFD') // Decomposes accents
+                .replace(/[\u0300-\u036f]/g, '') // Removes accent marks
+                .replace(/[^a-z0-9\s]/g, '') // Removes punctuation keeping spaces
+                .replace(/\s+/g, ' ') // Collapses multiple spaces
                 .trim();
         };
 
-        const expandAbbreviations = (str: string) => {
-            return str
-                .replace(/\bav\b|\bave\b/g, 'avenida')
-                .replace(/\br\b/g, 'rua')
-                .replace(/\bpref\b/g, 'prefeito')
-                .replace(/\bdr\b/g, 'doutor')
-                .replace(/\bcj\b/g, 'conjunto')
-                .replace(/\bsal\b|\bsl\b/g, 'sala')
-                .replace(/\bqd\b|\bq\b/g, 'quadra')
-                .replace(/\blt\b/g, 'lote')
-                .replace(/\bbl\b/g, 'bloco')
-                .replace(/\bent\b/g, 'entrada')
-                .replace(/\bpav\b|\bpavmto\b/g, 'pavimento');
+        const cleanStreetPrefixes = (str: string) => {
+            let s = normalizeText(str);
+            s = s.replace(/^(avenida|av|rua|r|praca|prc|alameda|al|rodovia|rod)\s+/g, '');
+            s = s.replace(/^(doutor|dr|prefeito|pref|coronel|cel|professor|prof)\s+/g, '');
+            return s;
         };
 
-        const normalize = (str: string) => {
-            let s = clean(str);
-            s = expandAbbreviations(s);
-            s = s.replace(/\b0+(\d+)/g, '$1'); // Remove leading zeros from integers
-            s = s.replace(/\bsn\b|\bsemnumero\b/g, ''); // Remove sn / sem numero
-            return s.replace(/[^a-z0-9]/g, ''); // alphanumeric only
-        };
-
-        const dataCep = cnpjData.cep ? cnpjData.cep.replace(/\D/g, '') : '';
-        const dataStreet = normalize(cnpjData.logradouro || '');
-        const dataNum = normalize(cnpjData.numero || '');
-
-        // 1. Precise street & number match
-        const physicalMatch = units.find(u => {
-            const unitAddr = normalize(u.address);
-            return unitAddr.includes(dataStreet) && (dataNum === '' || unitAddr.includes(dataNum));
-        });
-
-        if (physicalMatch) return physicalMatch;
-
-        // 2. Slower CEP match fallback
-        return units.find(u => {
-            const unitCep = u.cep ? u.cep.replace(/\D/g, '') : '';
-            if (unitCep !== dataCep) return false;
+        const isStreetSimilar = (street1: string, street2: string) => {
+            const s1 = cleanStreetPrefixes(street1);
+            const s2 = cleanStreetPrefixes(street2);
+            if (s1 === s2) return true;
+            if (!s1 || !s2) return false;
             
-            const unitAddr = normalize(u.address);
-            return unitAddr.includes(dataStreet) || 
-                   dataStreet.includes(unitAddr.substring(0, 5)) ||
-                   (dataNum !== '' && unitAddr.includes(dataNum));
+            const stopWords = ['de', 'do', 'da', 'dos', 'das', 'em', 'para', 'com', 'sem', 'rua', 'avenida', 'alameda', 'praca'];
+            const words1 = s1.split(' ').filter(w => w.length > 2 && !stopWords.includes(w));
+            const words2 = s2.split(' ').filter(w => w.length > 2 && !stopWords.includes(w));
+            
+            if (words1.length === 0 || words2.length === 0) return false;
+            
+            // Intersection of words
+            const intersection = words1.filter(w => 
+                words2.includes(w) || 
+                words2.some(w2 => w2.includes(w) || w.includes(w2))
+            );
+            
+            if (intersection.length === 0) return false;
+            
+            const matchThreshold = Math.min(words1.length, words2.length) <= 2 ? 1 : Math.ceil(Math.min(words1.length, words2.length) * 0.5);
+            
+            if (intersection.length < matchThreshold) return false;
+            
+            // For single-word matching, it must be significant (>= 4 characters) or contain each other
+            if (intersection.length === 1) {
+                const singleWord = intersection[0];
+                if (singleWord.length < 4 && !s1.includes(s2) && !s2.includes(s1)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        };
+
+        const dataUf = (cnpjData.uf || '').toUpperCase().trim();
+        const dataCep = (cnpjData.cep || '').replace(/\D/g, '');
+        const dataStreet = (cnpjData.logradouro || '');
+        const dataNum = (cnpjData.numero || '').replace(/\D/g, '');
+        const dataCity = (cnpjData.municipio || '').toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]/g, '');
+
+        if (!dataUf) return null;
+
+        const matchedUnit = units.find(u => {
+            // 1. State check is absolutely mandatory
+            const unitUf = (u.state || '').toUpperCase().trim();
+            if (dataUf !== unitUf) return false;
+
+            // Extract street and number from unit address
+            const addressParts = u.address.split(',');
+            const unitStreet = addressParts[0] || '';
+            const unitNum = (addressParts[1] || '').trim().replace(/\D/g, '');
+            const unitCep = (u.cep || '').replace(/\D/g, '');
+            
+            const unitCityNorm = u.address.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '');
+
+            // 2. City name check is highly required
+            if (dataCity && !unitCityNorm.includes(dataCity)) {
+                return false;
+            }
+
+            // 3. CEP match + exact building number check (highly precise)
+            if (dataCep && unitCep === dataCep) {
+                if (dataNum && unitNum && dataNum !== unitNum) {
+                    return false;
+                }
+                return true;
+            }
+
+            // 4. Exact/similar Street Name match + Exact Building Number match
+            if (dataNum && unitNum && dataNum === unitNum) {
+                if (isStreetSimilar(unitStreet, dataStreet)) {
+                    return true;
+                }
+            }
+
+            return false;
         });
+
+        return matchedUnit || null;
     };
 
     // Derived State for Single Lookup Match
