@@ -211,15 +211,29 @@ const CancellationProof: React.FC = () => {
                             <p className="text-[11px] font-black text-brand-pink uppercase tracking-[0.2em] mt-2">{t('cancel.doc_title')}</p>
                         </div>
                         
-                        <div className="flex justify-between items-end bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <div 
+                            className="flex justify-between items-end bg-slate-50 p-6 rounded-2xl border border-slate-100"
+                            style={{
+                                backgroundColor: '#f8fafc',
+                                WebkitPrintColorAdjust: 'exact',
+                                printColorAdjust: 'exact'
+                            }}
+                        >
                             <div><p className="text-[10px] uppercase font-black text-slate-400 mb-1">{t('common.client')}</p><p className="text-xl font-bold text-slate-900">{clientName || '---'}</p></div>
                             <div className="text-right"><p className="text-[10px] uppercase font-black text-slate-400 mb-1">Data</p><p className="font-bold text-slate-900">{new Date().toLocaleDateString()}</p></div>
                         </div>
 
                         <div className="space-y-4">
                             {items.map((item, i) => (
-                                <div key={i} className="p-5 rounded-2xl border border-slate-100 relative overflow-hidden bg-white shadow-sm flex justify-between items-center">
-                                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-slate-400"></div>
+                                <div key={i} className="p-5 rounded-2xl border border-slate-100 relative overflow-hidden bg-white shadow-sm flex justify-between items-center avoid-break">
+                                    <div 
+                                        className="absolute left-0 top-0 bottom-0 w-1.5 bg-slate-400"
+                                        style={{
+                                            backgroundColor: '#94a3b8',
+                                            WebkitPrintColorAdjust: 'exact',
+                                            printColorAdjust: 'exact'
+                                        }}
+                                    ></div>
                                     <div>
                                         <p className="font-bold text-slate-900 text-base">{item.service}</p>
                                         <p className="text-xs text-slate-500 mt-1">Cancelado em: {item.date.split('-').reverse().join('/')}</p>
@@ -232,7 +246,16 @@ const CancellationProof: React.FC = () => {
                         {reason && (
                             <div className="pt-4 border-t border-slate-200 mt-4">
                                 <p className="text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-2">{t('cancel.doc_reason_title')}</p>
-                                <p className="italic text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">"{reason}"</p>
+                                <p 
+                                    className="italic text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 avoid-break"
+                                    style={{
+                                        backgroundColor: '#f8fafc',
+                                        WebkitPrintColorAdjust: 'exact',
+                                        printColorAdjust: 'exact'
+                                    }}
+                                >
+                                    "{reason}"
+                                </p>
                             </div>
                         )}
 

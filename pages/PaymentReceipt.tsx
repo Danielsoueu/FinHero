@@ -212,7 +212,14 @@ const PaymentReceipt: React.FC = () => {
                              </div>
                          </div>
 
-                         <div className="grid grid-cols-2 gap-10 bg-slate-50 p-8 rounded-[1.5rem] border border-slate-100">
+                         <div 
+                             className="grid grid-cols-2 gap-10 bg-slate-50 p-8 rounded-[1.5rem] border border-slate-100"
+                             style={{
+                                 backgroundColor: '#f8fafc',
+                                 WebkitPrintColorAdjust: 'exact',
+                                 printColorAdjust: 'exact'
+                             }}
+                         >
                              <div>
                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">PAGO POR</p>
                                  <p className="font-bold text-slate-900 text-xl leading-tight">{client || '---'}</p>
@@ -235,10 +242,22 @@ const PaymentReceipt: React.FC = () => {
                                  </thead>
                                  <tbody className="divide-y divide-slate-100">
                                      {items.map((it, i) => (
-                                         <tr key={i} className="hover:bg-slate-50 transition-colors">
+                                         <tr key={i} className="hover:bg-slate-50 transition-colors avoid-break">
                                              <td className="py-5 pl-4 text-slate-900 font-bold">{it.descricao}</td>
                                              <td className="py-5 text-slate-500 font-medium">{it.plano || '---'}</td>
-                                             <td className="py-5"><span className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-slate-600 uppercase">{it.formaPagamento}</span></td>
+                                             <td className="py-5">
+                                                 <span 
+                                                     className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-slate-600 uppercase"
+                                                     style={{
+                                                         backgroundColor: '#f1f5f9',
+                                                         color: '#475569',
+                                                         WebkitPrintColorAdjust: 'exact',
+                                                         printColorAdjust: 'exact'
+                                                     }}
+                                                 >
+                                                     {it.formaPagamento}
+                                                 </span>
+                                             </td>
                                              <td className="py-5 pr-4 text-right font-black text-slate-900">{formatMoney(it.valor)}</td>
                                          </tr>
                                      ))}
@@ -247,18 +266,35 @@ const PaymentReceipt: React.FC = () => {
                          </div>
 
                          {obs && (
-                             <div className="bg-brand-pink/5 border border-brand-pink/10 p-5 rounded-2xl text-xs text-brand-pink mt-4">
-                                 <strong className="uppercase font-black text-[10px] tracking-widest block mb-2 opacity-70">Nota Interna</strong>
+                             <div 
+                                 className="bg-brand-pink/5 border border-brand-pink/10 p-5 rounded-2xl text-xs text-brand-pink mt-4 avoid-break"
+                                 style={{
+                                     backgroundColor: '#fff1f2',
+                                     borderColor: '#ffe4e6',
+                                     WebkitPrintColorAdjust: 'exact',
+                                     printColorAdjust: 'exact'
+                                 }}
+                             >
+                                 <strong className="uppercase font-black text-[10px] tracking-widest block mb-2 opacity-70 text-brand-pink">Nota Interna</strong>
                                  <p className="font-medium text-slate-700 leading-relaxed italic">{obs}</p>
                              </div>
                          )}
 
-                         <div className="p-8 rounded-[2rem] mt-6 flex justify-between items-center bg-slate-900 text-white shadow-xl shadow-slate-200">
+                         <div 
+                             className="p-8 rounded-[2rem] mt-6 flex justify-between items-center bg-slate-900 text-white shadow-xl shadow-slate-200 avoid-break"
+                             style={{
+                                 backgroundColor: '#0f172a',
+                                 color: '#ffffff',
+                                 WebkitPrintColorAdjust: 'exact',
+                                 printColorAdjust: 'exact',
+                                 border: '1px solid #0f172a'
+                              }}
+                         >
                              <span className="text-base font-bold opacity-70 tracking-wide uppercase">Valor Liquidado</span>
                              <span className="text-3xl font-black">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</span>
                          </div>
 
-                         <div className="mt-10 flex items-center gap-6 p-6 border border-slate-100 rounded-3xl bg-slate-50/50">
+                         <div className="mt-10 flex items-center gap-6 p-6 border border-slate-100 rounded-3xl bg-slate-50/50 avoid-break">
                              <img src={company.logoUrl} className="max-h-16 w-auto object-contain" alt="logo" />
                              <div className="border-l border-slate-200 pl-6">
                                  <p className="font-black text-slate-900 text-base">{company.nome}</p>

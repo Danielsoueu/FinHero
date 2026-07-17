@@ -326,17 +326,41 @@ const InterestCalculator: React.FC = () => {
                             <h2 className="font-black text-2xl text-slate-900">{company.nome}</h2>
                             <p className="text-[11px] font-black text-brand-pink uppercase tracking-[0.2em] mt-2">Demonstrativo de Débito</p>
                         </div>
-                        <div className="flex justify-between items-end bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <div 
+                            className="flex justify-between items-end bg-slate-50 p-6 rounded-2xl border border-slate-100"
+                            style={{
+                                backgroundColor: '#f8fafc',
+                                WebkitPrintColorAdjust: 'exact',
+                                printColorAdjust: 'exact'
+                            }}
+                        >
                             <div><p className="text-[10px] uppercase font-black text-slate-400 mb-1">Cliente</p><p className="text-xl font-bold text-slate-900">{clientName || '---'}</p></div>
                             <div className="text-right"><p className="text-[10px] uppercase font-black text-slate-400 mb-1">Data</p><p className="font-bold text-slate-900">{new Date().toLocaleDateString()}</p></div>
                         </div>
                         <div className="space-y-4">
                             {items.map((item, i) => (
-                                <div key={i} className="p-5 rounded-2xl border border-slate-100 relative overflow-hidden bg-white shadow-sm">
-                                    <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${item.status === 'Vencida' ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
+                                <div key={i} className="p-5 rounded-2xl border border-slate-100 relative overflow-hidden bg-white shadow-sm avoid-break">
+                                    <div 
+                                        className={`absolute left-0 top-0 bottom-0 w-1.5 ${item.status === 'Vencida' ? 'bg-red-500' : 'bg-emerald-500'}`}
+                                        style={{
+                                            backgroundColor: item.status === 'Vencida' ? '#ef4444' : '#10b981',
+                                            WebkitPrintColorAdjust: 'exact',
+                                            printColorAdjust: 'exact'
+                                        }}
+                                    ></div>
                                     <div className="flex justify-between items-center mb-4 pl-2">
                                         <span className="font-bold text-slate-900 text-base">{item.titulo}</span>
-                                        <span className={`text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider ${item.status === 'Vencida' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{item.status}</span>
+                                        <span 
+                                            className={`text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider ${item.status === 'Vencida' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}
+                                            style={{
+                                                backgroundColor: item.status === 'Vencida' ? '#fef2f2' : '#ecfdf5',
+                                                color: item.status === 'Vencida' ? '#dc2626' : '#059669',
+                                                WebkitPrintColorAdjust: 'exact',
+                                                printColorAdjust: 'exact'
+                                            }}
+                                        >
+                                            {item.status}
+                                        </span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-y-2 text-xs pl-2 text-slate-600">
                                         <span>{t('juros.due_date')}</span><span className="text-right font-bold text-slate-900">{item.dataVencimento.split('-').reverse().join('/')}</span>
@@ -353,7 +377,16 @@ const InterestCalculator: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className="p-8 rounded-[1.5rem] flex justify-between items-center bg-slate-900 text-white shadow-lg">
+                        <div 
+                            className="p-8 rounded-[1.5rem] flex justify-between items-center bg-slate-900 text-white shadow-lg avoid-break"
+                            style={{
+                                backgroundColor: '#0f172a',
+                                color: '#ffffff',
+                                WebkitPrintColorAdjust: 'exact',
+                                printColorAdjust: 'exact',
+                                border: '1px solid #0f172a'
+                            }}
+                        >
                             <span className="text-sm font-bold opacity-70">Total para Quitação</span>
                             <span className="text-3xl font-black">{formatMoney(items.reduce((a, b) => a + b.devido, 0))}</span>
                         </div>

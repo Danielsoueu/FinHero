@@ -92,10 +92,27 @@ const Negotiation: React.FC = () => {
                          <div className="flex flex-col items-center pb-6 border-b border-slate-100">
                              <img src={company.logoUrl} className="max-h-24 w-auto mb-4 object-contain" alt="logo" />
                              <h2 className="font-bold text-xl text-brand-dark">{company.nome}</h2>
-                             <span className="bg-brand-pink/10 text-brand-pink text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mt-2">{t('neg.doc_badge')}</span>
+                             <span 
+                                 className="bg-brand-pink/10 text-brand-pink text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mt-2"
+                                 style={{
+                                     backgroundColor: '#fff1f2',
+                                     color: '#ff0066',
+                                     WebkitPrintColorAdjust: 'exact',
+                                     printColorAdjust: 'exact'
+                                 }}
+                             >
+                                 {t('neg.doc_badge')}
+                             </span>
                          </div>
 
-                         <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                         <div 
+                             className="bg-slate-50 p-5 rounded-xl border border-slate-100"
+                             style={{
+                                 backgroundColor: '#f8fafc',
+                                 WebkitPrintColorAdjust: 'exact',
+                                 printColorAdjust: 'exact'
+                             }}
+                         >
                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('common.client')}</p>
                              <p className="font-bold text-lg text-brand-dark">{client}</p>
                          </div>
@@ -106,19 +123,33 @@ const Negotiation: React.FC = () => {
                                  <table className="w-full text-sm">
                                      <tbody className="divide-y divide-slate-100">
                                          {items.map((it, i) => (
-                                             <tr key={i} className="bg-white">
+                                             <tr key={i} className="bg-white avoid-break">
                                                  <td className="py-3 px-4 text-slate-600 font-medium">{it.titulo}</td>
                                                  <td className="py-3 px-4 text-right font-mono text-slate-800">{formatMoney(it.valor)}</td>
                                              </tr>
                                          ))}
                                      </tbody>
-                                     <tfoot className="bg-slate-50 border-t border-slate-200">
+                                     <tfoot 
+                                         className="bg-slate-50 border-t border-slate-200"
+                                         style={{
+                                             backgroundColor: '#f8fafc',
+                                             WebkitPrintColorAdjust: 'exact',
+                                             printColorAdjust: 'exact'
+                                         }}
+                                     >
                                          <tr>
                                              <td className="py-3 px-4 font-bold text-slate-500 text-xs uppercase">{t('common.subtotal')}</td>
                                              <td className="py-3 px-4 text-right font-bold text-slate-700">{formatMoney(total)}</td>
                                          </tr>
                                          {discAmount > 0 && (
-                                             <tr className="text-emerald-600 bg-emerald-50/50">
+                                             <tr 
+                                                 className="text-emerald-600 bg-emerald-50/50"
+                                                 style={{
+                                                     backgroundColor: '#ecfdf5',
+                                                     WebkitPrintColorAdjust: 'exact',
+                                                     printColorAdjust: 'exact'
+                                                 }}
+                                             >
                                                  <td className="py-2 px-4 font-bold text-xs uppercase">{t('neg.doc_discount')} ({discount}%)</td>
                                                  <td className="py-2 px-4 text-right font-bold">-{formatMoney(discAmount)}</td>
                                              </tr>
@@ -130,7 +161,7 @@ const Negotiation: React.FC = () => {
 
                          {/* Total Block Fixed for PDF with Hardcoded Styles */}
                          <div 
-                             className="p-6 rounded-2xl flex justify-between items-center shadow-lg mt-4"
+                             className="p-6 rounded-2xl flex justify-between items-center shadow-lg mt-4 avoid-break"
                              style={{ 
                                 backgroundColor: '#0F172A', 
                                 color: '#ffffff', 

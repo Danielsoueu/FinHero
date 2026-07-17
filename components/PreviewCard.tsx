@@ -52,12 +52,15 @@ const PreviewCard: React.FC<PreviewCardProps> = ({ children, title, contentId, h
             <div className="flex-grow flex items-center justify-center bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden min-h-[400px] relative">
                 {hasContent ? (
                     <div className="w-full h-full p-4 overflow-auto flex justify-center custom-scrollbar">
-                        {/* The document itself remains white to simulate paper */}
-                        <div 
-                            id={contentId} 
-                            className="bg-white shadow-lg w-full max-w-[210mm] p-8 md:p-10 text-slate-800 transform scale-95 origin-top"
-                        >
-                            {children}
+                        {/* Wrapper that handles the scaling for visual fitting in the preview panel */}
+                        <div className="w-full max-w-[210mm] transform scale-95 origin-top">
+                            {/* The document itself remains white to simulate paper, captured cleanly at 100% size */}
+                            <div 
+                                id={contentId} 
+                                className="bg-white shadow-lg w-full p-8 md:p-10 text-slate-800"
+                            >
+                                {children}
+                            </div>
                         </div>
                     </div>
                 ) : (
