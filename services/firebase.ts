@@ -51,8 +51,20 @@ export const signInWithGoogle = async () => {
 
         const userDomain = user.email ? user.email.split('@')[1] : '';
 
-        // Check if domain restriction is active
-        if (settings.domainRestrictionEnabled && settings.allowedDomain) {
+        // Sync or check user profile in Firestore
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+        const existingProfile = userSnap.exists() ? (userSnap.data() as UserProfile) : null;
+
+        const usersSnap = await getDocs(collection(db, 'users'));
+        const isFirstUser = usersSnap.empty;
+
+        // Determine if current user is an admin or owner account (exempt from domain restrictions)
+        const isOwnerAccount = user.email?.toLowerCase() === 'danielcontaescolar@gmail.com';
+        const isAdminUser = (existingProfile?.role === 'admin') || isFirstUser || isOwnerAccount;
+
+        // Check if domain restriction is active (administrators and owner bypass this restriction)
+        if (settings.domainRestrictionEnabled && settings.allowedDomain && !isAdminUser) {
             const allowed = settings.allowedDomain.toLowerCase().trim();
             if (userDomain.toLowerCase() !== allowed) {
                 await firebaseSignOut(auth);
@@ -60,24 +72,15 @@ export const signInWithGoogle = async () => {
             }
         }
 
-        // Sync or create user profile in Firestore
-        const userRef = doc(db, 'users', user.uid);
-        const userSnap = await getDoc(userRef);
-
         const now = new Date().toISOString();
 
         if (!userSnap.exists()) {
-            // First user or specific condition can default to admin if needed
-            // Check if there are any existing users to determine if first user should be admin
-            const usersSnap = await getDocs(collection(db, 'users'));
-            const isFirstUser = usersSnap.empty;
-
             const newProfile: UserProfile = {
                 uid: user.uid,
                 email: user.email || '',
                 displayName: user.displayName || user.email?.split('@')[0] || 'Usuário',
                 photoURL: user.photoURL || undefined,
-                role: isFirstUser ? 'admin' : 'user',
+                role: isAdminUser ? 'admin' : 'user',
                 status: 'active',
                 domain: userDomain,
                 createdAt: now,
@@ -87,21 +90,22 @@ export const signInWithGoogle = async () => {
             await setDoc(userRef, newProfile);
             return { user, profile: newProfile };
         } else {
-            const existingProfile = userSnap.data() as UserProfile;
-
-            if (existingProfile.status === 'blocked') {
+            if (existingProfile!.status === 'blocked') {
                 await firebaseSignOut(auth);
                 throw new Error('Sua conta está suspensa ou bloqueada pelo administrador.');
             }
 
-            // Update last login
+            // Ensure owner account always maintains admin role
+            const updatedRole = isOwnerAccount ? 'admin' : existingProfile!.role;
+
             await updateDoc(userRef, {
                 lastLoginAt: now,
-                displayName: user.displayName || existingProfile.displayName,
-                photoURL: user.photoURL || existingProfile.photoURL,
+                displayName: user.displayName || existingProfile!.displayName,
+                photoURL: user.photoURL || existingProfile!.photoURL,
+                role: updatedRole,
             });
 
-            return { user, profile: { ...existingProfile, lastLoginAt: now } };
+            return { user, profile: { ...existingProfile!, role: updatedRole, lastLoginAt: now } };
         }
     } catch (error: any) {
         console.error("Erro no login com Google:", error);

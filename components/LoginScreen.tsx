@@ -143,7 +143,7 @@ const LoginScreen: React.FC = () => {
                             </svg>
                             <div className="text-xs">
                                 <span className="font-bold block mb-0.5">Acesso Restrito ao Domínio:</span>
-                                Apenas e-mails terminados em <strong className="font-mono bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">@{workspaceSettings.allowedDomain}</strong> possuem permissão.
+                                Apenas e-mails terminados em <strong className="font-mono bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">@{workspaceSettings.allowedDomain}</strong> possuem permissão (administradores possuem acesso irrestrito).
                             </div>
                         </div>
                     )}
