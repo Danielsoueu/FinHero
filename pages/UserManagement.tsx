@@ -18,11 +18,14 @@ const UserManagement: React.FC = () => {
     // Domain restriction state
     const [domainInput, setDomainInput] = useState<string>(workspaceSettings.allowedDomain || '');
     const [restrictionEnabled, setRestrictionEnabled] = useState<boolean>(workspaceSettings.domainRestrictionEnabled || false);
+    const [allowedEmailsList, setAllowedEmailsList] = useState<string[]>(workspaceSettings.allowedEmails || []);
+    const [newEmailInput, setNewEmailInput] = useState<string>('');
     const [savingSettings, setSavingSettings] = useState<boolean>(false);
 
     useEffect(() => {
         setDomainInput(workspaceSettings.allowedDomain || '');
         setRestrictionEnabled(workspaceSettings.domainRestrictionEnabled || false);
+        setAllowedEmailsList(workspaceSettings.allowedEmails || []);
     }, [workspaceSettings]);
 
     // Fetch users in real-time
@@ -50,6 +53,29 @@ const UserManagement: React.FC = () => {
         return () => unsubscribe();
     }, [isAuthenticated]);
 
+    const handleAddEmail = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        const trimmed = newEmailInput.trim().toLowerCase();
+        if (!trimmed) return;
+        if (!trimmed.includes('@') || !trimmed.includes('.')) {
+            addToast('Por favor, informe um e-mail válido.', 'error');
+            return;
+        }
+        if (allowedEmailsList.some(email => email.toLowerCase() === trimmed)) {
+            addToast('Este e-mail já está na lista de exceções.', 'info');
+            setNewEmailInput('');
+            return;
+        }
+        setAllowedEmailsList([...allowedEmailsList, trimmed]);
+        setNewEmailInput('');
+        addToast(`E-mail ${trimmed} adicionado às exceções. Lembre-se de salvar as alterações.`, 'success');
+    };
+
+    const handleRemoveEmail = (emailToRemove: string) => {
+        setAllowedEmailsList(allowedEmailsList.filter(e => e.toLowerCase() !== emailToRemove.toLowerCase()));
+        addToast(`E-mail ${emailToRemove} removido da lista.`, 'info');
+    };
+
     const handleSaveDomainSettings = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isAdmin) {
@@ -62,9 +88,10 @@ const UserManagement: React.FC = () => {
             const formattedDomain = domainInput.trim().toLowerCase().replace(/^@/, '');
             await updateWorkspaceSettings({
                 allowedDomain: formattedDomain,
+                allowedEmails: allowedEmailsList,
                 domainRestrictionEnabled: restrictionEnabled
             });
-            addToast('Configurações do Google Workspace salvas com sucesso!', 'success');
+            addToast('Configurações de acesso salvas com sucesso!', 'success');
         } catch (error: any) {
             addToast(error.message || 'Erro ao salvar configurações.', 'error');
         } finally {
@@ -225,11 +252,11 @@ const UserManagement: React.FC = () => {
                 </div>
             </div>
 
-            {/* Google Workspace Domain Restriction Settings (Admin Only) */}
+            {/* Google Workspace Domain & Email Restriction Settings (Admin Only) */}
             {isAdmin && (
-                <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center">
+                <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center shrink-0">
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -238,13 +265,14 @@ const UserManagement: React.FC = () => {
                             </svg>
                         </div>
                         <div>
-                            <h2 className="text-lg font-black text-slate-900 dark:text-white">Restrição de Domínio Google Workspace</h2>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">Limite o login no sistema exclusivamente aos e-mails corporativos da sua empresa.</p>
+                            <h2 className="text-lg font-black text-slate-900 dark:text-white">Controle de Acesso & Restrição de Domínio</h2>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Configure o domínio corporativo principal e adicione e-mails individuais liberados para acesso.</p>
                         </div>
                     </div>
 
-                    <form onSubmit={handleSaveDomainSettings} className="space-y-4 pt-2">
-                        <div className="flex items-center gap-3">
+                    <form onSubmit={handleSaveDomainSettings} className="space-y-6">
+                        {/* Domain Restriction Toggle */}
+                        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -252,34 +280,102 @@ const UserManagement: React.FC = () => {
                                     onChange={(e) => setRestrictionEnabled(e.target.checked)}
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-pink"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-pink"></div>
                             </label>
-                            <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                                Exigir e-mail de um domínio Google Workspace específico para entrar
-                            </span>
+                            <div>
+                                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block">
+                                    Ativar Restrição por Domínio Corporativo
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    Quando ativado, apenas e-mails do domínio informado ou e-mails pré-autorizados na lista abaixo poderão realizar login.
+                                </span>
+                            </div>
                         </div>
 
                         {restrictionEnabled && (
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 animate-fade-in pt-2">
-                                <div className="relative flex-1">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">@</span>
-                                    <input
-                                        type="text"
-                                        value={domainInput}
-                                        onChange={(e) => setDomainInput(e.target.value)}
-                                        placeholder="minhaempresa.com.br"
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-pink transition-colors"
-                                    />
+                            <div className="space-y-5 animate-fade-in pl-1">
+                                {/* Corporate Domain Input */}
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider">
+                                        Domínio Corporativo Principal (@):
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">@</span>
+                                        <input
+                                            type="text"
+                                            value={domainInput}
+                                            onChange={(e) => setDomainInput(e.target.value)}
+                                            placeholder="companyhero.com"
+                                            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-pink transition-colors"
+                                        />
+                                    </div>
                                 </div>
-                                <button
-                                    type="submit"
-                                    disabled={savingSettings}
-                                    className="px-6 py-3 rounded-2xl bg-brand-pink hover:bg-brand-hover text-white font-bold text-sm transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                                >
-                                    {savingSettings ? 'Salvando...' : 'Salvar Restrição'}
-                                </button>
+
+                                {/* Whitelisted Full Emails Section */}
+                                <div className="pt-2">
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider">
+                                        E-mails Individuais Autorizados (Exceções):
+                                    </label>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                                        Adicione o endereço de e-mail completo de colaboradores externos, administradores ou consultores que não possuem e-mail do domínio principal.
+                                    </p>
+
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="email"
+                                            value={newEmailInput}
+                                            onChange={(e) => setNewEmailInput(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddEmail(); } }}
+                                            placeholder="exemplo.pessoa@gmail.com ou parceiro@outro.com"
+                                            className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-pink transition-colors"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAddEmail()}
+                                            className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs transition-all shrink-0"
+                                        >
+                                            + Adicionar E-mail
+                                        </button>
+                                    </div>
+
+                                    {/* List of Allowed Emails Chips */}
+                                    {allowedEmailsList.length > 0 ? (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {allowedEmailsList.map((email) => (
+                                                <span
+                                                    key={email}
+                                                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-pink/10 text-brand-pink border border-brand-pink/20 text-xs font-bold"
+                                                >
+                                                    <span>{email}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveEmail(email)}
+                                                        className="hover:text-red-600 transition-colors focus:outline-none"
+                                                        title="Remover autorização deste e-mail"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-[11px] text-slate-400 italic mt-2">
+                                            Nenhum e-mail individual cadastrado até o momento.
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         )}
+
+                        <div className="pt-2 flex justify-end">
+                            <button
+                                type="submit"
+                                disabled={savingSettings}
+                                className="px-8 py-3.5 rounded-2xl bg-brand-pink hover:bg-brand-hover text-white font-bold text-sm transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                            >
+                                {savingSettings ? 'Salvando...' : 'Salvar Alterações de Acesso'}
+                            </button>
+                        </div>
                     </form>
                 </div>
             )}

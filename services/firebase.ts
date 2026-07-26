@@ -29,6 +29,7 @@ export interface UserProfile {
 
 export interface WorkspaceSettings {
     allowedDomain?: string;
+    allowedEmails?: string[];
     domainRestrictionEnabled: boolean;
     updatedAt: string;
     updatedBy?: string;
@@ -63,12 +64,16 @@ export const signInWithGoogle = async () => {
         const isOwnerAccount = user.email?.toLowerCase() === 'danielcontaescolar@gmail.com';
         const isAdminUser = (existingProfile?.role === 'admin') || isFirstUser || isOwnerAccount;
 
-        // Check if domain restriction is active (administrators and owner bypass this restriction)
-        if (settings.domainRestrictionEnabled && settings.allowedDomain && !isAdminUser) {
+        // Check if user email is explicitly whitelisted in settings
+        const userEmailNormalized = (user.email || '').toLowerCase().trim();
+        const isWhitelistedEmail = (settings.allowedEmails || []).some(e => e.toLowerCase().trim() === userEmailNormalized);
+
+        // Check if domain restriction is active (administrators, owner, and whitelisted emails bypass domain restriction)
+        if (settings.domainRestrictionEnabled && settings.allowedDomain && !isAdminUser && !isWhitelistedEmail) {
             const allowed = settings.allowedDomain.toLowerCase().trim();
             if (userDomain.toLowerCase() !== allowed) {
                 await firebaseSignOut(auth);
-                throw new Error(`Acesso restrito ao domínio corporativo: @${settings.allowedDomain}`);
+                throw new Error(`Acesso restrito ao domínio corporativo (@${settings.allowedDomain}) ou e-mails autorizados.`);
             }
         }
 
