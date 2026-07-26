@@ -45,7 +45,9 @@ export const translations = {
                 cnpj_label: 'Consulta CNPJ',
                 cnpj_desc: 'Dados completos de empresas',
                 enderecos_label: 'Unidades',
-                enderecos_desc: 'Nossos endereços e unidades'
+                enderecos_desc: 'Nossos endereços e unidades',
+                usuarios_label: 'Gestão de Usuários',
+                usuarios_desc: 'Acessos, contas e permissões da equipe'
             }
         },
         common: {
@@ -267,7 +269,9 @@ export const translations = {
                 cnpj_label: 'CNPJ Lookup',
                 cnpj_desc: 'Complete company data',
                 enderecos_label: 'Locations',
-                enderecos_desc: 'Our addresses and units'
+                enderecos_desc: 'Our addresses and units',
+                usuarios_label: 'User Management',
+                usuarios_desc: 'Team access, accounts and permissions'
             }
         },
         common: {
@@ -489,7 +493,9 @@ export const translations = {
                 cnpj_label: 'Consulta CNPJ',
                 cnpj_desc: 'Datos completos de empresas',
                 enderecos_label: 'Unidades',
-                enderecos_desc: 'Nuestras direcciones y unidades'
+                enderecos_desc: 'Nuestras direcciones y unidades',
+                usuarios_label: 'Gestión de Usuarios',
+                usuarios_desc: 'Accesos, cuentas y permisos del equipo'
             }
         },
         common: {

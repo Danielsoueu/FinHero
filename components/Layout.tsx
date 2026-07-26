@@ -99,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
         { id: TabId.CUPONS, label: t('sidebar.cupons'), icon: <Icons.Cupons /> },
         { id: TabId.CNPJ, label: t('sidebar.cnpj'), icon: <Icons.Cnpj /> },
         { id: TabId.ENDERECOS, label: t('sidebar.enderecos'), icon: <Icons.Enderecos /> },
-        { id: TabId.USUARIOS, label: t('sidebar.usuarios'), icon: <Icons.Users /> },
+        ...(isAdmin ? [{ id: TabId.USUARIOS, label: t('sidebar.usuarios'), icon: <Icons.Users /> }] : []),
     ];
 
     return (
@@ -199,8 +199,12 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                     <div className="flex items-center gap-2">
                         {isAuthenticated ? (
                             <button
-                                onClick={() => onTabChange(TabId.USUARIOS)}
-                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-white"
+                                onClick={() => {
+                                    if (isAdmin) {
+                                        onTabChange(TabId.USUARIOS);
+                                    }
+                                }}
+                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-white ${isAdmin ? 'cursor-pointer' : 'cursor-default'}`}
                             >
                                 {userProfile?.photoURL && <img src={userProfile.photoURL} alt="" className="w-4 h-4 rounded-full" />}
                                 <span className="max-w-[70px] truncate">{userProfile?.displayName.split(' ')[0]}</span>

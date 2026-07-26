@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import Clock from '../components/Clock';
 import IuguStatus from '../components/IuguStatus';
 
@@ -24,6 +25,7 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const { t } = useLanguage();
+    const { isAdmin } = useAuth();
 
     const apps = [
         {
@@ -82,13 +84,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             color: 'text-orange-500 bg-orange-50 dark:bg-orange-500/10',
             icon: <MapPin size={24} />
         },
-        {
+        ...(isAdmin ? [{
             id: TabId.USUARIOS,
-            label: 'Gestão de Usuários & Login',
-            desc: 'Autenticação Google Workspace, permissões de usuário e visão Admin',
+            label: t('dashboard.apps.usuarios_label'),
+            desc: t('dashboard.apps.usuarios_desc'),
             color: 'text-purple-500 bg-purple-50 dark:bg-purple-500/10',
             icon: <Users size={24} />
-        }
+        }] : [])
     ];
 
     return (
