@@ -34,11 +34,12 @@ const LanguageSwitcher = () => {
 
 const ThemeToggle = () => {
     const { theme, toggleTheme } = useTheme();
+    const { t } = useLanguage();
     return (
         <button 
             onClick={toggleTheme}
             className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-brand-pink dark:hover:text-brand-pink border border-slate-200/80 dark:border-slate-700/80 transition-all shadow-xs"
-            title="Alternar Tema"
+            title={t('login.theme_toggle')}
         >
             {theme === 'dark' ? (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,6 +58,7 @@ const ThemeToggle = () => {
 const LoginScreen: React.FC = () => {
     const { loginWithGoogle, workspaceSettings } = useAuth();
     const { addToast } = useToast();
+    const { t } = useLanguage();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -65,12 +67,12 @@ const LoginScreen: React.FC = () => {
         setErrorMessage(null);
         try {
             await loginWithGoogle();
-            addToast('Login realizado com sucesso via Google!', 'success');
+            addToast(t('login.success_toast'), 'success');
         } catch (error: any) {
             console.error("Login Error:", error);
-            const msg = error.message || 'Erro ao realizar login com o Google.';
+            const msg = error.message || t('login.auth_failed_toast');
             setErrorMessage(msg);
-            addToast('Falha na autenticação.', 'error');
+            addToast(t('login.auth_failed_toast'), 'error');
         } finally {
             setIsLoggingIn(false);
         }
@@ -111,11 +113,11 @@ const LoginScreen: React.FC = () => {
                         <div className="inline-flex items-center justify-center gap-3 mb-2">
                             <div className="w-2.5 h-8 bg-brand-pink rounded-full"></div>
                             <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
-                                Login
+                                {t('login.title')}
                             </span>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                            Acesse a plataforma corporativa Company Hero
+                            {t('login.subtitle')}
                         </p>
                     </div>
 
@@ -126,12 +128,12 @@ const LoginScreen: React.FC = () => {
                                 <svg className="w-4 h-4 shrink-0 mt-0.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Erro de Autenticação:</span>
+                                <span>{t('login.auth_error')}</span>
                             </div>
                             <p className="pl-6">{errorMessage}</p>
                             {errorMessage.includes('unauthorized-domain') && (
                                 <div className="pl-6 pt-1 text-[11px] text-red-700 dark:text-red-400 bg-red-100/60 dark:bg-red-900/40 p-2.5 rounded-xl font-mono break-all">
-                                    💡 Adicione o domínio no Firebase Console:
+                                    {t('login.firebase_domain_hint')}
                                     <br /><strong className="text-slate-900 dark:text-white bg-white/80 dark:bg-slate-950/80 px-1.5 py-0.5 rounded mt-1 inline-block">{currentHostname}</strong>
                                 </div>
                             )}
@@ -145,8 +147,8 @@ const LoginScreen: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                             <div className="text-xs">
-                                <span className="font-bold block mb-0.5">Acesso Restrito:</span>
-                                Apenas e-mails <strong className="font-mono bg-amber-100 dark:bg-amber-900/60 px-1 py-0.5 rounded">@{workspaceSettings.allowedDomain}</strong> ou pré-autorizados.
+                                <span className="font-bold block mb-0.5">{t('login.restricted_access')}</span>
+                                {t('login.restricted_desc')} <strong className="font-mono bg-amber-100 dark:bg-amber-900/60 px-1 py-0.5 rounded">@{workspaceSettings.allowedDomain}</strong> {t('login.restricted_suffix')}
                             </div>
                         </div>
                     )}
@@ -169,7 +171,7 @@ const LoginScreen: React.FC = () => {
                                     </svg>
                                 </div>
                                 <span className="text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white">
-                                    {isLoggingIn ? 'Autenticando...' : 'Entrar com o Google'}
+                                    {isLoggingIn ? t('login.authenticating') : t('login.google_btn')}
                                 </span>
                             </div>
                             <svg className="w-5 h-5 text-slate-400 group-hover:text-brand-pink group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,19 +185,19 @@ const LoginScreen: React.FC = () => {
                             disabled={isLoggingIn}
                             className="w-full py-4 px-6 rounded-2xl bg-slate-700 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm tracking-wider uppercase transition-all shadow-md hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                         >
-                            {isLoggingIn ? 'Conectando...' : 'LOGIN'}
+                            {isLoggingIn ? t('login.connecting') : t('login.login_btn')}
                         </button>
                     </div>
 
                     <p className="text-center text-[11px] text-slate-400 dark:text-slate-500 pt-4">
-                        Autenticação segura via Google Workspace
+                        {t('login.secure_workspace')}
                     </p>
                 </div>
             </main>
 
             {/* Footer */}
             <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-[11px] text-slate-400 dark:text-slate-600 relative z-20">
-                <p>© {new Date().getFullYear()} Company Hero — Todos os direitos reservados.</p>
+                <p>© {new Date().getFullYear()} {t('login.copyright')}</p>
             </footer>
         </div>
     );

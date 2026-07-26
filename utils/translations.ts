@@ -223,6 +223,24 @@ export const translations = {
             label_type: 'Tipo de Unidade',
             type_propria: 'Própria',
             type_parceria: 'Parceria'
+        },
+        login: {
+            title: 'Login',
+            subtitle: 'Acesse a plataforma corporativa Company Hero',
+            auth_error: 'Erro de Autenticação:',
+            restricted_access: 'Acesso Restrito:',
+            restricted_desc: 'Apenas e-mails',
+            restricted_suffix: 'ou pré-autorizados.',
+            google_btn: 'Entrar com o Google',
+            authenticating: 'Autenticando...',
+            connecting: 'Conectando...',
+            login_btn: 'LOGIN',
+            secure_workspace: 'Autenticação segura via Google Workspace',
+            copyright: 'Company Hero — Todos os direitos reservados.',
+            theme_toggle: 'Alternar Tema',
+            success_toast: 'Login realizado com sucesso via Google!',
+            auth_failed_toast: 'Falha na autenticação.',
+            firebase_domain_hint: '💡 Adicione o domínio no Firebase Console:'
         }
     },
     en: {
@@ -447,6 +465,24 @@ export const translations = {
             label_type: 'Unit Type',
             type_propria: 'Own',
             type_parceria: 'Partnership'
+        },
+        login: {
+            title: 'Login',
+            subtitle: 'Access the Company Hero corporate platform',
+            auth_error: 'Authentication Error:',
+            restricted_access: 'Restricted Access:',
+            restricted_desc: 'Only emails',
+            restricted_suffix: 'or pre-authorized accounts.',
+            google_btn: 'Sign in with Google',
+            authenticating: 'Authenticating...',
+            connecting: 'Connecting...',
+            login_btn: 'LOG IN',
+            secure_workspace: 'Secure authentication via Google Workspace',
+            copyright: 'Company Hero — All rights reserved.',
+            theme_toggle: 'Toggle Theme',
+            success_toast: 'Logged in successfully with Google!',
+            auth_failed_toast: 'Authentication failed.',
+            firebase_domain_hint: '💡 Add the domain in Firebase Console:'
         }
     },
     es: {
@@ -671,6 +707,24 @@ export const translations = {
             label_type: 'Tipo de Unidad',
             type_propria: 'Propia',
             type_parceria: 'Asociada'
+        },
+        login: {
+            title: 'Iniciar Sesión',
+            subtitle: 'Acceda a la plataforma corporativa Company Hero',
+            auth_error: 'Error de Autenticación:',
+            restricted_access: 'Acceso Restringido:',
+            restricted_desc: 'Solo correos',
+            restricted_suffix: 'o preautorizados.',
+            google_btn: 'Iniciar sesión con Google',
+            authenticating: 'Autenticando...',
+            connecting: 'Conectando...',
+            login_btn: 'INGRESAR',
+            secure_workspace: 'Autenticación segura vía Google Workspace',
+            copyright: 'Company Hero — Todos los derechos reservados.',
+            theme_toggle: 'Cambiar Tema',
+            success_toast: '¡Inicio de sesión exitoso con Google!',
+            auth_failed_toast: 'Fallo en la autenticación.',
+            firebase_domain_hint: '💡 Agregue el dominio en Firebase Console:'
         }
     }
 };
