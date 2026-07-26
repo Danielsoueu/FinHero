@@ -3,6 +3,8 @@ import { TabId, Language } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { useAuth } from '../contexts/AuthContext';
+import LoginModal from './LoginModal';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -20,8 +22,10 @@ const Icons = {
     Cupons: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9V5.25A2.25 2.25 0 0 1 4.25 3h15.5A2.25 2.25 0 0 1 22 5.25V9a2 2 0 0 0-2 2 2 2 0 0 0 2 2v3.75A2.25 2.25 0 0 1 19.75 21H4.25A2.25 2.25 0 0 1 2 18.75V13a2 2 0 0 0 2-2 2 2 0 0 0-2-2Z"/><path d="M14 3v2"/><path d="M14 19v2"/><path d="M14 8v2"/><path d="M14 14v2"/></svg>,
     Cnpj: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><rect width="10" height="14" x="6" y="4" rx="2" opacity="0.1"/><path d="M8 7h6"/><path d="M8 11h6"/><path d="M8 15h4"/></svg>,
     Enderecos: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+    Users: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
     Sun: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>,
-    Moon: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    Moon: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+    LogOut: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
 };
 
 const LanguageSwitcher = ({ className }: { className?: string }) => {
@@ -83,6 +87,7 @@ const ThemeToggle = () => {
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
     const { t } = useLanguage();
+    const { isAuthenticated, userProfile, isAdmin, openLoginModal, logoutUser } = useAuth();
 
     const navItems = [
         { id: TabId.HOME, label: t('sidebar.home'), icon: <Icons.Home /> },
@@ -94,10 +99,13 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
         { id: TabId.CUPONS, label: t('sidebar.cupons'), icon: <Icons.Cupons /> },
         { id: TabId.CNPJ, label: t('sidebar.cnpj'), icon: <Icons.Cnpj /> },
         { id: TabId.ENDERECOS, label: t('sidebar.enderecos'), icon: <Icons.Enderecos /> },
+        { id: TabId.USUARIOS, label: t('sidebar.usuarios'), icon: <Icons.Users /> },
     ];
 
     return (
         <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans transition-colors duration-300">
+            <LoginModal />
+
             {/* Desktop Sidebar */}
             <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-shrink-0 hidden md:flex flex-col relative z-20">
                 <div className="p-6 pb-4 flex flex-col gap-5">
@@ -119,30 +127,65 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                         <button
                             key={item.id}
                             onClick={() => onTabChange(item.id)}
-                            className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-hero ${
+                            className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-semibold transition-hero ${
                                 activeTab === item.id
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white shadow-hero'
                                     : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                             }`}
                         >
-                            <span className={`${activeTab === item.id ? 'text-brand-pink' : 'text-slate-400 dark:text-slate-500'}`}>
-                                {item.icon}
-                            </span>
-                            <span>{item.label}</span>
+                            <div className="flex items-center space-x-3">
+                                <span className={`${activeTab === item.id ? 'text-brand-pink' : 'text-slate-400 dark:text-slate-500'}`}>
+                                    {item.icon}
+                                </span>
+                                <span>{item.label}</span>
+                            </div>
+                            {item.id === TabId.USUARIOS && isAdmin && (
+                                <span className="text-[9px] bg-brand-pink text-white font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                                    Admin
+                                </span>
+                            )}
                         </button>
                     ))}
                 </nav>
                 
                 <div className="p-4 mt-auto border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                        <div className="w-9 h-9 rounded-xl bg-brand-pink flex items-center justify-center text-[11px] font-black text-white shadow-glow">
-                            CH
+                    {isAuthenticated && userProfile ? (
+                        <div className="flex items-center justify-between gap-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                {userProfile.photoURL ? (
+                                    <img src={userProfile.photoURL} alt="" className="w-8 h-8 rounded-xl object-cover ring-2 ring-brand-pink/30 shrink-0" />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-xl bg-brand-pink flex items-center justify-center text-[10px] font-black text-white shrink-0">
+                                        {userProfile.displayName.substring(0, 2).toUpperCase()}
+                                    </div>
+                                )}
+                                <div className="min-w-0">
+                                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{userProfile.displayName}</p>
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium capitalize truncate flex items-center gap-1">
+                                        <span className={`w-1.5 h-1.5 rounded-full ${isAdmin ? 'bg-purple-500' : 'bg-emerald-500'}`}></span>
+                                        {isAdmin ? 'Administrador' : 'Usuário'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={logoutUser}
+                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl transition-colors"
+                                title="Sair da Conta"
+                            >
+                                <Icons.LogOut />
+                            </button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">Company Hero</p>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Workspace</p>
-                        </div>
-                    </div>
+                    ) : (
+                        <button
+                            onClick={openLoginModal}
+                            className="w-full flex items-center justify-center gap-2.5 p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-pink dark:hover:bg-brand-hover text-white text-xs font-bold transition-all shadow-md hover:scale-[1.01] active:scale-[0.99]"
+                        >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                            </svg>
+                            <span>Entrar com Google</span>
+                        </button>
+                    )}
                 </div>
             </aside>
 
@@ -154,8 +197,23 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                          <h1 className="text-lg font-black text-slate-900 dark:text-white">FinHero</h1>
                     </div>
                     <div className="flex items-center gap-2">
+                        {isAuthenticated ? (
+                            <button
+                                onClick={() => onTabChange(TabId.USUARIOS)}
+                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-white"
+                            >
+                                {userProfile?.photoURL && <img src={userProfile.photoURL} alt="" className="w-4 h-4 rounded-full" />}
+                                <span className="max-w-[70px] truncate">{userProfile?.displayName.split(' ')[0]}</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={openLoginModal}
+                                className="px-3 py-1.5 rounded-xl bg-brand-pink text-white text-xs font-bold shadow-sm"
+                            >
+                                Entrar
+                            </button>
+                        )}
                         <LanguageSwitcher />
-                        <CurrencySwitcher />
                         <ThemeToggle />
                     </div>
                 </header>

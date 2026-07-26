@@ -10,7 +10,8 @@ import {
     MessageSquare,
     Ticket,
     Search,
-    MapPin
+    MapPin,
+    Users
 } from 'lucide-react';
 import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -80,6 +81,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             desc: t('dashboard.apps.enderecos_desc'),
             color: 'text-orange-500 bg-orange-50 dark:bg-orange-500/10',
             icon: <MapPin size={24} />
+        },
+        {
+            id: TabId.USUARIOS,
+            label: 'Gestão de Usuários & Login',
+            desc: 'Autenticação Google Workspace, permissões de usuário e visão Admin',
+            color: 'text-purple-500 bg-purple-50 dark:bg-purple-500/10',
+            icon: <Users size={24} />
         }
     ];
 

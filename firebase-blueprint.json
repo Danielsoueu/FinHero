@@ -1,0 +1,35 @@
+{
+  "collections": {
+    "users": {
+      "description": "User profiles and role management",
+      "documents": {
+        "{userId}": {
+          "fields": {
+            "uid": { "type": "string", "required": true },
+            "email": { "type": "string", "required": true },
+            "displayName": { "type": "string", "required": false },
+            "photoURL": { "type": "string", "required": false },
+            "role": { "type": "string", "required": true, "description": "admin or user" },
+            "status": { "type": "string", "required": true, "description": "active or blocked" },
+            "domain": { "type": "string", "required": false },
+            "createdAt": { "type": "string", "required": true },
+            "lastLoginAt": { "type": "string", "required": true }
+          }
+        }
+      }
+    },
+    "settings": {
+      "description": "Application and workspace configuration settings",
+      "documents": {
+        "workspace": {
+          "fields": {
+            "allowedDomain": { "type": "string", "required": false, "description": "Optional Google Workspace domain restriction e.g. minhaempresa.com" },
+            "domainRestrictionEnabled": { "type": "boolean", "required": true },
+            "updatedAt": { "type": "string", "required": true },
+            "updatedBy": { "type": "string", "required": false }
+          }
+        }
+      }
+    }
+  }
+}

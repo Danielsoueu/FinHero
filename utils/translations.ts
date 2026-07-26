@@ -12,6 +12,7 @@ export const translations = {
             cupons: 'Cupons',
             cnpj: 'Consulta CNPJ',
             enderecos: 'Unidades',
+            usuarios: 'Gestão de Usuários',
             workspace: 'Área de Trabalho'
         },
         dashboard: {
@@ -233,6 +234,7 @@ export const translations = {
             cupons: 'Coupons',
             cnpj: 'CNPJ Lookup',
             enderecos: 'Locations',
+            usuarios: 'User Management',
             workspace: 'Workspace'
         },
         dashboard: {
@@ -454,6 +456,7 @@ export const translations = {
             cupons: 'Cupones',
             cnpj: 'Consulta CNPJ',
             enderecos: 'Unidades',
+            usuarios: 'Gestión de Usuarios',
             workspace: 'Espacio de Trabajo'
         },
         dashboard: {

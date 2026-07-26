@@ -55,7 +55,8 @@ export enum TabId {
     NEGOCIACAO = 'negociacao',
     CUPONS = 'cupons',
     CNPJ = 'cnpj',
-    ENDERECOS = 'enderecos'
+    ENDERECOS = 'enderecos',
+    USUARIOS = 'usuarios'
 }
 
 export interface CancellationItem {

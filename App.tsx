@@ -4,6 +4,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import InterestCalculator from './pages/InterestCalculator';
@@ -14,6 +15,7 @@ import Negotiation from './pages/Negotiation';
 import Coupons from './pages/Coupons';
 import CnpjLookup from './pages/CnpjLookup';
 import Addresses from './pages/Addresses';
+import UserManagement from './pages/UserManagement';
 
 const AppContent: React.FC = () => {
     const [activeTab, setActiveTab] = useState<TabId>(TabId.HOME);
@@ -38,6 +40,8 @@ const AppContent: React.FC = () => {
                 return <CnpjLookup />;
             case TabId.ENDERECOS:
                 return <Addresses />;
+            case TabId.USUARIOS:
+                return <UserManagement />;
             default:
                 return <Dashboard onNavigate={setActiveTab} />;
         }
@@ -56,7 +60,9 @@ const App: React.FC = () => {
             <CurrencyProvider>
                 <ToastProvider>
                     <ThemeProvider>
-                        <AppContent />
+                        <AuthProvider>
+                            <AppContent />
+                        </AuthProvider>
                     </ThemeProvider>
                 </ToastProvider>
             </CurrencyProvider>
