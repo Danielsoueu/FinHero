@@ -3,12 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 
 const LoginModal: React.FC = () => {
-    const { isLoginModalOpen, closeLoginModal, loginWithGoogle, simulateLogin, workspaceSettings } = useAuth();
+    const { isLoginModalOpen, closeLoginModal, loginWithGoogle, workspaceSettings } = useAuth();
     const { addToast } = useToast();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [showDemoOptions, setShowDemoOptions] = useState(false);
-    const [customEmail, setCustomEmail] = useState('');
 
     if (!isLoginModalOpen) return null;
 
@@ -23,16 +21,10 @@ const LoginModal: React.FC = () => {
             console.error("Login Error:", error);
             const msg = error.message || 'Erro ao realizar login com o Google.';
             setErrorMessage(msg);
-            setShowDemoOptions(true);
-            addToast('Ocorreu um erro no login. Veja as instruções ou use o modo de teste.', 'info');
+            addToast('Ocorreu um erro no login. Veja as instruções.', 'error');
         } finally {
             setIsLoggingIn(false);
         }
-    };
-
-    const handleSimulatedLogin = (role: 'admin' | 'user') => {
-        simulateLogin(role, customEmail.trim() || undefined);
-        addToast(`Login de teste (${role === 'admin' ? 'Administrador' : 'Usuário'}) ativado com sucesso!`, 'success');
     };
 
     const currentHostname = typeof window !== 'undefined' ? window.location.hostname : '';
@@ -124,56 +116,10 @@ const LoginModal: React.FC = () => {
                         </>
                     )}
                 </button>
-
-                {/* Demo / Testing Toggle */}
-                <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800">
-                    <button
-                        onClick={() => setShowDemoOptions(!showDemoOptions)}
-                        className="w-full text-center text-xs font-semibold text-brand-pink hover:underline flex items-center justify-center gap-1.5 py-1"
-                    >
-                        <span>{showDemoOptions ? 'Ocultar opções de simulação de teste' : '⚡ Testar sem popup do Google (Simular Admin/Usuário)'}</span>
-                        <svg className={`w-3.5 h-3.5 transition-transform ${showDemoOptions ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    {showDemoOptions && (
-                        <div className="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3 animate-fade-in">
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                                Selecione um perfil para testar a interface e os módulos de administração instantaneamente:
-                            </p>
-
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">E-mail para teste (opcional):</label>
-                                <input
-                                    type="email"
-                                    value={customEmail}
-                                    onChange={(e) => setCustomEmail(e.target.value)}
-                                    placeholder={`exemplo@${workspaceSettings.allowedDomain || 'companyhero.com'}`}
-                                    className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-pink/50"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 pt-1">
-                                <button
-                                    onClick={() => handleSimulatedLogin('admin')}
-                                    className="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                                >
-                                    <span>👑 Admin Demo</span>
-                                </button>
-                                <button
-                                    onClick={() => handleSimulatedLogin('user')}
-                                    className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                                >
-                                    <span>👤 Usuário Demo</span>
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     );
 };
 
 export default LoginModal;
+

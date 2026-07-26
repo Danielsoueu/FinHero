@@ -4,8 +4,9 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
+import LoginScreen from './components/LoginScreen';
 import Dashboard from './pages/Dashboard';
 import InterestCalculator from './pages/InterestCalculator';
 import PercentageCalculator from './pages/PercentageCalculator';
@@ -18,7 +19,21 @@ import Addresses from './pages/Addresses';
 import UserManagement from './pages/UserManagement';
 
 const AppContent: React.FC = () => {
+    const { isAuthenticated, isLoading } = useAuth();
     const [activeTab, setActiveTab] = useState<TabId>(TabId.HOME);
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 font-sans text-slate-900 dark:text-white">
+                <div className="w-12 h-12 border-4 border-brand-pink border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Carregando FinHero...</p>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return <LoginScreen />;
+    }
 
     const renderContent = () => {
         switch (activeTab) {

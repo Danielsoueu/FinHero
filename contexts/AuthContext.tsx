@@ -11,7 +11,6 @@ interface AuthContextType {
     isLoading: boolean;
     workspaceSettings: WorkspaceSettings;
     loginWithGoogle: () => Promise<void>;
-    simulateLogin: (role: 'admin' | 'user', email?: string) => void;
     logoutUser: () => Promise<void>;
     updateWorkspaceSettings: (settings: Partial<WorkspaceSettings>) => Promise<void>;
     openLoginModal: () => void;
@@ -100,52 +99,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
-    const simulateLogin = (role: 'admin' | 'user', customEmail?: string) => {
-        const domain = workspaceSettings.allowedDomain || 'companyhero.com';
-        const defaultEmail = role === 'admin' 
-            ? `admin@${domain}` 
-            : `usuario@${domain}`;
-        const finalEmail = customEmail || defaultEmail;
-        const displayName = role === 'admin' ? 'Administrador (Demo)' : 'Usuário Padrão (Demo)';
-
-        const simulatedProfile: UserProfile = {
-            uid: `demo-${role}-${Date.now()}`,
-            email: finalEmail,
-            displayName: displayName,
-            photoURL: role === 'admin' 
-                ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
-                : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-            role: role,
-            status: 'active',
-            domain: finalEmail.split('@')[1] || domain,
-            createdAt: new Date().toISOString(),
-            lastLoginAt: new Date().toISOString()
-        };
-
-        setUserProfile(simulatedProfile);
-        setCurrentUser({
-            uid: simulatedProfile.uid,
-            email: simulatedProfile.email,
-            displayName: simulatedProfile.displayName,
-            photoURL: simulatedProfile.photoURL,
-            emailVerified: true,
-            isAnonymous: false,
-            metadata: {},
-            providerData: [],
-            refreshToken: '',
-            tenantId: null,
-            delete: async () => {},
-            getIdToken: async () => '',
-            getIdTokenResult: async () => ({} as any),
-            reload: async () => {},
-            toJSON: () => ({}),
-            phoneNumber: null,
-            providerId: 'google.com'
-        } as unknown as User);
-
-        setIsLoginModalOpen(false);
-    };
-
     const logoutUser = async () => {
         setIsLoading(true);
         try {
@@ -190,7 +143,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 isLoading,
                 workspaceSettings,
                 loginWithGoogle,
-                simulateLogin,
                 logoutUser,
                 updateWorkspaceSettings,
                 openLoginModal,
