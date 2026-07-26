@@ -1,12 +1,12 @@
 {
-  "projectId": "gen-lang-client-0171006632",
-  "appId": "1:829934840921:web:dfb8ce5b9e776fe6c79548",
-  "apiKey": "AIzaSyD8df0VxTfHbpbjF0wHjaqdbgmct79q6Ls",
-  "authDomain": "gen-lang-client-0171006632.firebaseapp.com",
+  "projectId": "ferramenta-hero",
+  "appId": "1:869653837844:web:081b193c170081012d0f01",
+  "apiKey": "AIzaSyBvIMVF9eazr9_-OT_wwhw_ypY0GGA5bX4",
+  "authDomain": "ferramenta-hero.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-finhero-ca13b490-fc08-40c0-91c3-c2b576d3c194",
-  "storageBucket": "gen-lang-client-0171006632.firebasestorage.app",
-  "messagingSenderId": "829934840921",
+  "storageBucket": "ferramenta-hero.firebasestorage.app",
+  "messagingSenderId": "869653837844",
   "measurementId": "",
-  "oAuthClientId": "829934840921-uvfbbq5lnafcnhtpqujo7nco4gbup1k6.apps.googleusercontent.com",
+  "oAuthClientId": "869653837844-pj207gi1iaks5jhdm3h77peunsn6011s.apps.googleusercontent.com",
   "recaptchaSiteKey": ""
 }

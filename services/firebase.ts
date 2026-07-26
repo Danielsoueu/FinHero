@@ -107,7 +107,10 @@ export const signInWithGoogle = async () => {
         console.error("Erro no login com Google:", error);
         if (error.code === 'auth/unauthorized-domain') {
             const currentHostname = typeof window !== 'undefined' ? window.location.hostname : 'este domínio';
-            throw new Error(`O domínio "${currentHostname}" precisa ser adicionado aos "Domínios Autorizados" no Firebase Console (Authentication > Settings > Authorized domains) para permitir o popup de login do Google.`);
+            throw new Error(`O domínio "${currentHostname}" precisa ser adicionado aos "Domínios Autorizados" no projeto Firebase correto (${firebaseConfig.projectId}).`);
+        }
+        if (error.code === 'auth/operation-not-allowed') {
+            throw new Error(`O método de login do Google precisa ser ATIVADO no Firebase Console (Authentication > Método de Login > Google > Ativar).`);
         }
         throw error;
     }
