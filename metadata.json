@@ -1,5 +1,6 @@
 {
   "name": "FinHero",
   "description": "A professional financial management suite for calculating interest, generating receipts, cancellation proofs, and negotiation proposals.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

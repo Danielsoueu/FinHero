@@ -17,6 +17,7 @@ import Coupons from './pages/Coupons';
 import CnpjLookup from './pages/CnpjLookup';
 import Addresses from './pages/Addresses';
 import UserManagement from './pages/UserManagement';
+import ExecutivePresentations from './pages/ExecutivePresentations';
 
 const AppContent: React.FC = () => {
     const { isAuthenticated, isLoading } = useAuth();
@@ -57,6 +58,8 @@ const AppContent: React.FC = () => {
                 return <Addresses />;
             case TabId.USUARIOS:
                 return <UserManagement />;
+            case TabId.APRESENTACAO:
+                return <ExecutivePresentations />;
             default:
                 return <Dashboard onNavigate={setActiveTab} />;
         }

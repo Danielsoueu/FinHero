@@ -4,6 +4,7 @@ import CompanySelector from '../components/CompanySelector';
 import PreviewCard from '../components/PreviewCard';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { getCompanyBrand, isMevCompany } from '../utils/branding';
 
 const Negotiation: React.FC = () => {
     const { t } = useLanguage();
@@ -13,6 +14,10 @@ const Negotiation: React.FC = () => {
     const [discount, setDiscount] = useState('');
     const [items, setItems] = useState<InvoiceItem[]>([]);
     const [showResult, setShowResult] = useState(false);
+    const [protocolNumber] = useState(() => Math.floor(Math.random() * 9000) + 1000);
+
+    const brand = getCompanyBrand(company);
+    const isMev = isMevCompany(company);
 
     // Temp item
     const [title, setTitle] = useState('');
@@ -80,7 +85,16 @@ const Negotiation: React.FC = () => {
                     </div>
 
                     <div className="flex gap-4 pt-2">
-                        <button onClick={handleGenerate} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('neg.generate_btn')}</button>
+                        <button 
+                            onClick={handleGenerate} 
+                            className={`flex-1 py-4 text-white rounded-2xl font-bold transition shadow-lg ${
+                                isMev 
+                                    ? 'bg-[#0A20FF] hover:bg-[#033ECD] shadow-blue-500/25' 
+                                    : 'bg-brand-pink hover:bg-brand-hover shadow-glow'
+                            }`}
+                        >
+                            {t('neg.generate_btn')}
+                        </button>
                         <button onClick={() => { setItems([]); setShowResult(false); }} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">{t('common.clean')}</button>
                     </div>
                 </div>
@@ -89,50 +103,68 @@ const Negotiation: React.FC = () => {
             <PreviewCard contentId="neg-preview" hasContent={showResult} clientName={client}>
                  {company && (
                      <div className="flex flex-col gap-6 text-sm font-sans h-full">
-                         <div className="flex flex-col items-center pb-6 border-b border-slate-100">
-                             <img src={company.logoUrl} className="max-h-24 w-auto mb-4 object-contain" alt="logo" />
-                             <h2 className="font-bold text-xl text-brand-dark">{company.nome}</h2>
+                         {/* Header */}
+                         <div 
+                             className="flex flex-col items-center pb-6 border-b text-center"
+                             style={{ borderColor: brand.borderColor }}
+                         >
+                             <div className="p-2 bg-white rounded-2xl shadow-xs mb-3">
+                                 <img src={company.logoUrl} className="max-h-20 w-auto object-contain" alt="logo" />
+                             </div>
+                             <h2 className="font-bold text-2xl text-slate-900">{company.nome}</h2>
                              <span 
-                                 className="bg-brand-pink/10 text-brand-pink text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mt-2"
+                                 className="text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider mt-2 inline-block"
                                  style={{
-                                     backgroundColor: '#fff1f2',
-                                     color: '#ff0066',
+                                     backgroundColor: brand.badgeBg,
+                                     color: brand.badgeText,
                                      WebkitPrintColorAdjust: 'exact',
                                      printColorAdjust: 'exact'
                                  }}
                              >
-                                 {t('neg.doc_badge')}
+                                 {isMev ? 'PROPOSTA FORMAL DE ACORDO EXTRAJUDICIAL' : t('neg.doc_badge')}
                              </span>
+                             <p className="text-xs font-mono text-slate-400 font-bold mt-1">
+                                 #{brand.codePrefix}-NEG-{protocolNumber}
+                             </p>
                          </div>
 
+                         {/* Client Metadata */}
                          <div 
-                             className="bg-slate-50 p-5 rounded-xl border border-slate-100"
+                             className="p-5 rounded-2xl border"
                              style={{
-                                 backgroundColor: '#f8fafc',
+                                 backgroundColor: brand.tintBg,
+                                 borderColor: brand.borderColor,
                                  WebkitPrintColorAdjust: 'exact',
                                  printColorAdjust: 'exact'
                              }}
                          >
                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{t('common.client')}</p>
-                             <p className="font-bold text-lg text-brand-dark">{client}</p>
+                             <p className="font-bold text-lg text-slate-900">{client}</p>
+                             {isMev && (
+                                 <p className="text-[11px] font-semibold text-slate-500 mt-1">Proponente: Meu Escritório Virtual LTDA • CNPJ 18.494.398/0001-44</p>
+                             )}
                          </div>
 
                          <div className="flex-grow">
                              <p className="text-[10px] uppercase font-bold text-slate-400 mb-3 tracking-wider ml-1">{t('neg.doc_details_title')}</p>
-                             <div className="border border-slate-200 rounded-xl overflow-hidden">
+                             <div 
+                                 className="border rounded-2xl overflow-hidden"
+                                 style={{ borderColor: brand.borderColor }}
+                             >
                                  <table className="w-full text-sm">
                                      <tbody className="divide-y divide-slate-100">
                                          {items.map((it, i) => (
                                              <tr key={i} className="bg-white avoid-break">
-                                                 <td className="py-3 px-4 text-slate-600 font-medium">{it.titulo}</td>
-                                                 <td className="py-3 px-4 text-right font-mono text-slate-800">{formatMoney(it.valor)}</td>
+                                                 <td className="py-3 px-4 text-slate-700 font-medium">{it.titulo}</td>
+                                                 <td className="py-3 px-4 text-right font-mono font-bold text-slate-800">{formatMoney(it.valor)}</td>
                                              </tr>
                                          ))}
                                      </tbody>
                                      <tfoot 
-                                         className="bg-slate-50 border-t border-slate-200"
+                                         className="border-t"
                                          style={{
-                                             backgroundColor: '#f8fafc',
+                                             backgroundColor: brand.tintBg,
+                                             borderColor: brand.borderColor,
                                              WebkitPrintColorAdjust: 'exact',
                                              printColorAdjust: 'exact'
                                          }}
@@ -161,20 +193,60 @@ const Negotiation: React.FC = () => {
 
                          {/* Total Block Fixed for PDF with Hardcoded Styles */}
                          <div 
-                             className="p-6 rounded-2xl flex justify-between items-center shadow-lg mt-4 avoid-break"
+                             className="p-6 rounded-2xl flex justify-between items-center shadow-lg mt-2 text-white avoid-break"
                              style={{ 
-                                backgroundColor: '#0F172A', 
-                                color: '#ffffff', 
-                                printColorAdjust: 'exact', 
-                                WebkitPrintColorAdjust: 'exact',
-                                border: '1px solid #0F172A'
+                                 background: isMev ? 'linear-gradient(135deg, #0A20FF 0%, #033ECD 100%)' : '#0F172A', 
+                                 color: '#ffffff', 
+                                 printColorAdjust: 'exact', 
+                                 WebkitPrintColorAdjust: 'exact',
+                                 border: isMev ? '1px solid #0A20FF' : '1px solid #0F172A'
                              }}
                          >
-                             <span className="text-sm font-medium opacity-80" style={{ color: '#ffffff' }}>{t('neg.doc_final_val')}</span>
-                             <span className="text-3xl font-bold tracking-tight" style={{ color: '#ffffff' }}>{formatMoney(finalAmount)}</span>
+                             <div>
+                                 <span className="text-sm font-medium opacity-80 block" style={{ color: '#ffffff' }}>{t('neg.doc_final_val')}</span>
+                                 <span className="text-xs opacity-75 font-mono">Valor especial com desconto acordado</span>
+                             </div>
+                             <span className="text-3xl font-black tracking-tight" style={{ color: '#ffffff' }}>{formatMoney(finalAmount)}</span>
                          </div>
 
-                         <div className="text-center text-[10px] text-slate-400 mt-2 italic">
+                         {/* Term Note */}
+                         <div 
+                             className="p-4 rounded-xl border text-xs leading-relaxed avoid-break"
+                             style={{
+                                 backgroundColor: brand.tintBg,
+                                 borderColor: brand.borderColor,
+                                 color: brand.darkColor
+                             }}
+                         >
+                             <p className="font-bold uppercase tracking-wider text-[9px] mb-1 opacity-75">
+                                 {isMev ? 'Validade da Proposta MEV' : 'Condições'}
+                             </p>
+                             <p className="opacity-90">
+                                 {isMev 
+                                     ? 'Condição especial válida mediante confirmação e liquidação em parcela única. O pagamento outorga quitação irrevogável das obrigações discriminadas junto ao Meu Escritório Virtual.'
+                                     : 'Condições válidas exclusivamente conforme o cronograma e parâmetros alinhados nesta proposta.'
+                                 }
+                             </p>
+                         </div>
+
+                         {/* Footer */}
+                         <div 
+                             className="pt-4 flex flex-col md:flex-row items-center justify-between gap-3 border-t avoid-break"
+                             style={{ borderColor: brand.borderColor }}
+                         >
+                             <div className="flex items-center gap-3">
+                                 <img src={company.logoUrl} className="max-h-7 w-auto object-contain" alt="mini logo" />
+                                 <p className="text-[11px] font-bold text-slate-500">
+                                     {isMev ? 'Meu Escritório Virtual • meuescritoriovirtual.com.br' : company.nome}
+                                 </p>
+                             </div>
+                             <div className="text-right">
+                                 <p className="text-xs font-mono font-bold text-slate-500">
+                                     REGISTRO: {brand.codePrefix}-NEG-{protocolNumber}
+                                 </p>
+                             </div>
+                         </div>
+                         <div className="text-center text-[10px] text-slate-400 italic">
                              {t('common.doc_generated')}
                          </div>
                      </div>

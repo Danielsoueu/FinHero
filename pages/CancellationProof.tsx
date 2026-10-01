@@ -6,6 +6,7 @@ import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { getCompanyBrand, isMevCompany } from '../utils/branding';
 
 const CancellationProof: React.FC = () => {
     const { t } = useLanguage();
@@ -17,6 +18,10 @@ const CancellationProof: React.FC = () => {
     const [reason, setReason] = useState('');
     const [items, setItems] = useState<CancellationItem[]>([]);
     const [showResult, setShowResult] = useState(false);
+    const [protocolNumber] = useState(() => Math.floor(Math.random() * 9000) + 1000);
+
+    const brand = getCompanyBrand(company);
+    const isMev = isMevCompany(company);
 
     const [isRecurring, setIsRecurring] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -196,7 +201,16 @@ const CancellationProof: React.FC = () => {
                     </div>
 
                     <div className="flex gap-4 pt-4">
-                        <button onClick={() => setShowResult(true)} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">{t('cancel.generate_btn')}</button>
+                        <button 
+                            onClick={() => setShowResult(true)} 
+                            className={`flex-1 py-4 text-white rounded-2xl font-bold transition shadow-lg ${
+                                isMev 
+                                    ? 'bg-[#0A20FF] hover:bg-[#033ECD] shadow-blue-500/25' 
+                                    : 'bg-brand-pink hover:bg-brand-hover shadow-glow'
+                            }`}
+                        >
+                            {t('cancel.generate_btn')}
+                        </button>
                         <button onClick={() => {setItems([]); setClientName(''); setReason(''); setShowResult(false);}} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">{t('common.clean')}</button>
                     </div>
                 </div>
@@ -205,62 +219,159 @@ const CancellationProof: React.FC = () => {
             <PreviewCard contentId="cancel-preview" hasContent={showResult} clientName={clientName}>
                 {company && (
                     <div className="flex flex-col gap-6 text-sm font-sans h-full">
-                        <div className="flex flex-col items-center border-b-2 border-slate-100 pb-8">
-                            <img src={company.logoUrl} alt="Logo" className="max-h-20 w-auto mb-4 object-contain" />
-                            <h2 className="font-black text-2xl text-slate-900">{company.nome}</h2>
-                            <p className="text-[11px] font-black text-brand-pink uppercase tracking-[0.2em] mt-2">{t('cancel.doc_title')}</p>
-                        </div>
-                        
+                        {/* Branded Header */}
                         <div 
-                            className="flex justify-between items-end bg-slate-50 p-6 rounded-2xl border border-slate-100"
+                            className="flex flex-col items-center border-b-2 pb-8 text-center"
                             style={{
-                                backgroundColor: '#f8fafc',
+                                borderColor: isMev ? brand.borderColor : '#f1f5f9',
                                 WebkitPrintColorAdjust: 'exact',
                                 printColorAdjust: 'exact'
                             }}
                         >
-                            <div><p className="text-[10px] uppercase font-black text-slate-400 mb-1">{t('common.client')}</p><p className="text-xl font-bold text-slate-900">{clientName || '---'}</p></div>
-                            <div className="text-right"><p className="text-[10px] uppercase font-black text-slate-400 mb-1">Data</p><p className="font-bold text-slate-900">{new Date().toLocaleDateString()}</p></div>
+                            <div className="p-2 bg-white rounded-2xl shadow-xs mb-3">
+                                <img src={company.logoUrl} alt="Logo" className="max-h-20 w-auto object-contain" />
+                            </div>
+                            <h2 className="font-black text-2xl text-slate-900 tracking-tight">{company.nome}</h2>
+                            <span 
+                                className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-[0.2em] mt-2 inline-block"
+                                style={{
+                                    backgroundColor: brand.badgeBg,
+                                    color: brand.badgeText,
+                                    WebkitPrintColorAdjust: 'exact',
+                                    printColorAdjust: 'exact'
+                                }}
+                            >
+                                {isMev ? 'TERMO FORMAL DE CANCELAMENTO' : t('cancel.doc_title')}
+                            </span>
+                            <p className="text-xs font-mono text-slate-400 font-bold mt-1">
+                                #{brand.codePrefix}-CAN-{protocolNumber}
+                            </p>
+                        </div>
+                        
+                        {/* Client & Date Information */}
+                        <div 
+                            className="flex justify-between items-end p-6 rounded-2xl border"
+                            style={{
+                                backgroundColor: brand.tintBg,
+                                borderColor: brand.borderColor,
+                                WebkitPrintColorAdjust: 'exact',
+                                printColorAdjust: 'exact'
+                            }}
+                        >
+                            <div>
+                                <p className="text-[10px] uppercase font-black text-slate-400 mb-1">{t('common.client')}</p>
+                                <p className="text-xl font-bold text-slate-900">{clientName || '---'}</p>
+                                {isMev && (
+                                    <p className="text-[11px] font-semibold text-slate-500 mt-1">Unidade: Sede Virtual MEV • CNPJ: 18.494.398/0001-44</p>
+                                )}
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[10px] uppercase font-black text-slate-400 mb-1">Data de Homologação</p>
+                                <p className="font-bold text-slate-900">{new Date().toLocaleDateString()}</p>
+                                <span 
+                                    className="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase"
+                                    style={{
+                                        backgroundColor: '#FEF2F2',
+                                        color: '#DC2626',
+                                        WebkitPrintColorAdjust: 'exact',
+                                        printColorAdjust: 'exact'
+                                    }}
+                                >
+                                    ● Contrato Rescindido
+                                </span>
+                            </div>
                         </div>
 
+                        {/* List of Cancelled Services */}
                         <div className="space-y-4">
+                            <p className="text-[11px] font-black uppercase text-slate-400 tracking-wider">Serviços Descontinuados</p>
                             {items.map((item, i) => (
-                                <div key={i} className="p-5 rounded-2xl border border-slate-100 relative overflow-hidden bg-white shadow-sm flex justify-between items-center avoid-break">
+                                <div 
+                                    key={i} 
+                                    className="p-5 rounded-2xl border relative overflow-hidden bg-white shadow-xs flex justify-between items-center avoid-break"
+                                    style={{ borderColor: brand.borderColor }}
+                                >
                                     <div 
-                                        className="absolute left-0 top-0 bottom-0 w-1.5 bg-slate-400"
+                                        className="absolute left-0 top-0 bottom-0 w-1.5"
                                         style={{
-                                            backgroundColor: '#94a3b8',
+                                            backgroundColor: brand.primaryColor,
                                             WebkitPrintColorAdjust: 'exact',
                                             printColorAdjust: 'exact'
                                         }}
-                                    ></div>
+                                    />
                                     <div>
                                         <p className="font-bold text-slate-900 text-base">{item.service}</p>
-                                        <p className="text-xs text-slate-500 mt-1">Cancelado em: {item.date.split('-').reverse().join('/')}</p>
+                                        <p className="text-xs text-slate-500 mt-1">Cancelado com efeito a partir de: {item.date.split('-').reverse().join('/')}</p>
                                     </div>
                                     {item.value > 0 && <span className="font-bold text-slate-900">{formatMoney(item.value)}</span>}
                                 </div>
                             ))}
                         </div>
 
+                        {/* Reason Box */}
                         {reason && (
-                            <div className="pt-4 border-t border-slate-200 mt-4">
+                            <div 
+                                className="pt-4 border-t mt-4"
+                                style={{ borderColor: brand.borderColor }}
+                            >
                                 <p className="text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-2">{t('cancel.doc_reason_title')}</p>
-                                <p 
-                                    className="italic text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 avoid-break"
+                                <div 
+                                    className="italic text-slate-700 p-4 rounded-xl border border-l-4 avoid-break"
                                     style={{
-                                        backgroundColor: '#f8fafc',
+                                        backgroundColor: brand.tintBg,
+                                        borderColor: brand.borderColor,
+                                        borderLeftColor: brand.primaryColor,
                                         WebkitPrintColorAdjust: 'exact',
                                         printColorAdjust: 'exact'
                                     }}
                                 >
                                     "{reason}"
-                                </p>
+                                </div>
                             </div>
                         )}
 
-                        <div className="mt-auto pt-8 text-center">
-                             <p className="text-xs opacity-60 text-slate-400">{t('common.doc_generated')}</p>
+                        {/* Institutional Term of Closure */}
+                        <div 
+                            className="p-5 rounded-2xl border text-xs leading-relaxed mt-2 avoid-break"
+                            style={{
+                                backgroundColor: brand.tintBg,
+                                borderColor: brand.borderColor,
+                                color: brand.darkColor,
+                                WebkitPrintColorAdjust: 'exact',
+                                printColorAdjust: 'exact'
+                            }}
+                        >
+                            <p className="font-bold uppercase tracking-wider text-[10px] mb-1.5 opacity-75">
+                                {isMev ? 'Declaração Institucional MEV' : 'Termo de Encerramento'}
+                            </p>
+                            <p className="opacity-90">
+                                {isMev 
+                                    ? 'Certificamos que as obrigações cadastrais e serviços contratados junto ao Meu Escritório Virtual foram devidamente encerrados nesta data. Não constam pendências impeditivas futuras vinculadas ao período rescindido.'
+                                    : 'Certificamos que as obrigações e serviços acima indicados foram cancelados em conformidade com as diretrizes contratuais vigentes.'
+                                }
+                            </p>
+                        </div>
+
+                        {/* Official Sign-off and Verification Footer */}
+                        <div 
+                            className="mt-auto pt-6 flex flex-col md:flex-row items-center justify-between gap-4 border-t avoid-break"
+                            style={{ borderColor: brand.borderColor }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <img src={company.logoUrl} className="max-h-8 w-auto object-contain" alt="mini logo" />
+                                <div>
+                                    <p className="font-black text-slate-900 text-xs">{company.nome}</p>
+                                    <p className="text-[10px] text-slate-400">
+                                        {isMev ? 'Departamento de Contratos e Operações • meuescritoriovirtual.com.br' : 'Central de Atendimento'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[9px] font-black uppercase text-slate-400">Autenticação do Termo</p>
+                                <p className="text-xs font-mono font-bold text-slate-600">
+                                    {brand.codePrefix}-TERMO-{protocolNumber}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 )}

@@ -11,7 +11,8 @@ import {
     Ticket,
     Search,
     MapPin,
-    Users
+    Users,
+    Presentation
 } from 'lucide-react';
 import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -83,6 +84,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             desc: t('dashboard.apps.enderecos_desc'),
             color: 'text-orange-500 bg-orange-50 dark:bg-orange-500/10',
             icon: <MapPin size={24} />
+        },
+        {
+            id: TabId.APRESENTACAO,
+            label: t('dashboard.apps.apresentacao_label'),
+            desc: t('dashboard.apps.apresentacao_desc'),
+            color: 'text-pink-600 bg-pink-50 dark:bg-pink-500/10',
+            icon: <Presentation size={24} />
         },
         ...(isAdmin ? [{
             id: TabId.USUARIOS,

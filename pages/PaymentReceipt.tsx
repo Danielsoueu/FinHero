@@ -6,6 +6,7 @@ import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { getCompanyBrand, isMevCompany } from '../utils/branding';
 
 const PaymentReceipt: React.FC = () => {
     const { t } = useLanguage();
@@ -17,6 +18,10 @@ const PaymentReceipt: React.FC = () => {
     const [obs, setObs] = useState('');
     const [items, setItems] = useState<ReceiptItem[]>([]);
     const [showResult, setShowResult] = useState(false);
+    const [protocolNumber] = useState(() => Math.floor(Math.random() * 9000) + 1000);
+
+    const brand = getCompanyBrand(company);
+    const isMev = isMevCompany(company);
 
     const [desc, setDesc] = useState('');
     const [plan, setPlan] = useState('');
@@ -192,7 +197,16 @@ const PaymentReceipt: React.FC = () => {
                     </div>
                     
                     <div className="flex gap-4 pt-2">
-                        <button onClick={() => setShowResult(true)} className="flex-1 py-4 bg-brand-pink text-white rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">Gerar Recibo</button>
+                        <button 
+                            onClick={() => setShowResult(true)} 
+                            className={`flex-1 py-4 text-white rounded-2xl font-bold transition shadow-lg ${
+                                isMev 
+                                    ? 'bg-[#0A20FF] hover:bg-[#033ECD] shadow-blue-500/25' 
+                                    : 'bg-brand-pink hover:bg-brand-hover shadow-glow'
+                            }`}
+                        >
+                            Gerar Recibo
+                        </button>
                         <button onClick={() => {setItems([]); setClient(''); setShowResult(false);}} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Limpar</button>
                     </div>
                 </div>
@@ -201,21 +215,51 @@ const PaymentReceipt: React.FC = () => {
             <PreviewCard contentId="receipt-preview" hasContent={showResult} clientName={client}>
                  {company && (
                      <div className="flex flex-col gap-8 font-sans">
-                         <div className="flex justify-between items-start border-b-4 border-slate-900 pb-8">
+                         {/* Header with Brand Accent Line */}
+                         <div 
+                             className="flex justify-between items-start border-b-4 pb-8"
+                             style={{
+                                 borderColor: brand.primaryColor,
+                                 WebkitPrintColorAdjust: 'exact',
+                                 printColorAdjust: 'exact'
+                             }}
+                         >
                              <div>
+                                 {isMev && (
+                                     <span 
+                                         className="inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider mb-2"
+                                         style={{
+                                             backgroundColor: brand.badgeBg,
+                                             color: brand.badgeText,
+                                             WebkitPrintColorAdjust: 'exact',
+                                             printColorAdjust: 'exact'
+                                         }}
+                                     >
+                                         MEU ESCRITÓRIO VIRTUAL • COMPROVANTE OFICIAL
+                                     </span>
+                                 )}
                                  <h2 className="text-4xl font-black text-slate-900 tracking-tighter">RECIBO</h2>
-                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em] mt-1"># HERO-{Math.floor(Math.random() * 9000) + 1000}</p>
+                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em] mt-1 font-mono">
+                                     # {brand.codePrefix}-{protocolNumber}
+                                 </p>
                              </div>
                              <div className="text-right">
                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Total Recebido</p>
-                                 <p className="text-4xl font-black text-brand-pink tracking-tight">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</p>
+                                 <p 
+                                     className="text-4xl font-black tracking-tight"
+                                     style={{ color: brand.primaryColor }}
+                                 >
+                                     {formatMoney(items.reduce((s, i) => s + i.valor, 0))}
+                                 </p>
                              </div>
                          </div>
 
+                         {/* Client / Operation Metadata */}
                          <div 
-                             className="grid grid-cols-2 gap-10 bg-slate-50 p-8 rounded-[1.5rem] border border-slate-100"
+                             className="grid grid-cols-2 gap-10 p-8 rounded-[1.5rem] border"
                              style={{
-                                 backgroundColor: '#f8fafc',
+                                 backgroundColor: brand.tintBg,
+                                 borderColor: brand.borderColor,
                                  WebkitPrintColorAdjust: 'exact',
                                  printColorAdjust: 'exact'
                              }}
@@ -223,10 +267,24 @@ const PaymentReceipt: React.FC = () => {
                              <div>
                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">PAGO POR</p>
                                  <p className="font-bold text-slate-900 text-xl leading-tight">{client || '---'}</p>
+                                 {isMev && (
+                                     <p className="text-[11px] font-semibold text-slate-500 mt-1">Beneficiário: Meu Escritório Virtual LTDA</p>
+                                 )}
                              </div>
                              <div className="text-right">
                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">DATA DA OPERAÇÃO</p>
                                  <p className="font-bold text-slate-900 text-lg">{date ? date.split('-').reverse().join('/') : new Date().toLocaleDateString()}</p>
+                                 <span 
+                                     className="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase"
+                                     style={{
+                                         backgroundColor: '#ECFDF5',
+                                         color: '#059669',
+                                         WebkitPrintColorAdjust: 'exact',
+                                         printColorAdjust: 'exact'
+                                     }}
+                                 >
+                                     ✓ Liquidado
+                                 </span>
                              </div>
                          </div>
 
@@ -247,10 +305,10 @@ const PaymentReceipt: React.FC = () => {
                                              <td className="py-5 text-slate-500 font-medium">{it.plano || '---'}</td>
                                              <td className="py-5">
                                                  <span 
-                                                     className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-slate-600 uppercase"
+                                                     className="px-3 py-1 rounded-full text-[10px] font-black uppercase"
                                                      style={{
-                                                         backgroundColor: '#f1f5f9',
-                                                         color: '#475569',
+                                                         backgroundColor: isMev ? '#EBF1FF' : '#f1f5f9',
+                                                         color: isMev ? '#0A20FF' : '#475569',
                                                          WebkitPrintColorAdjust: 'exact',
                                                          printColorAdjust: 'exact'
                                                      }}
@@ -267,41 +325,72 @@ const PaymentReceipt: React.FC = () => {
 
                          {obs && (
                              <div 
-                                 className="bg-brand-pink/5 border border-brand-pink/10 p-5 rounded-2xl text-xs text-brand-pink mt-4 avoid-break"
+                                 className="p-5 rounded-2xl text-xs mt-4 avoid-break border"
                                  style={{
-                                     backgroundColor: '#fff1f2',
-                                     borderColor: '#ffe4e6',
+                                     backgroundColor: brand.badgeBg,
+                                     borderColor: brand.borderColor,
+                                     color: brand.badgeText,
                                      WebkitPrintColorAdjust: 'exact',
                                      printColorAdjust: 'exact'
                                  }}
                              >
-                                 <strong className="uppercase font-black text-[10px] tracking-widest block mb-2 opacity-70 text-brand-pink">Nota Interna</strong>
+                                 <strong 
+                                     className="uppercase font-black text-[10px] tracking-widest block mb-2 opacity-80"
+                                     style={{ color: brand.primaryColor }}
+                                 >
+                                     {isMev ? 'Nota Corporativa MEV' : 'Nota Interna'}
+                                 </strong>
                                  <p className="font-medium text-slate-700 leading-relaxed italic">{obs}</p>
                              </div>
                          )}
 
+                         {/* Total Settlement Box */}
                          <div 
-                             className="p-8 rounded-[2rem] mt-6 flex justify-between items-center bg-slate-900 text-white shadow-xl shadow-slate-200 avoid-break"
+                             className="p-8 rounded-[2rem] mt-6 flex justify-between items-center text-white shadow-xl avoid-break"
                              style={{
-                                 backgroundColor: '#0f172a',
+                                 background: isMev ? 'linear-gradient(135deg, #0A20FF 0%, #033ECD 100%)' : '#0f172a',
                                  color: '#ffffff',
                                  WebkitPrintColorAdjust: 'exact',
                                  printColorAdjust: 'exact',
-                                 border: '1px solid #0f172a'
+                                 border: isMev ? '1px solid #0A20FF' : '1px solid #0f172a'
                               }}
                          >
-                             <span className="text-base font-bold opacity-70 tracking-wide uppercase">Valor Liquidado</span>
-                             <span className="text-3xl font-black">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</span>
+                             <div>
+                                 <span className="text-base font-bold opacity-80 tracking-wide uppercase block">Valor Liquidado</span>
+                                 <span className="text-xs opacity-75 font-mono">Quitação definitiva do período</span>
+                             </div>
+                             <span className="text-4xl font-black">{formatMoney(items.reduce((s, i) => s + i.valor, 0))}</span>
                          </div>
 
-                         <div className="mt-10 flex items-center gap-6 p-6 border border-slate-100 rounded-3xl bg-slate-50/50 avoid-break">
-                             <img src={company.logoUrl} className="max-h-16 w-auto object-contain" alt="logo" />
-                             <div className="border-l border-slate-200 pl-6">
-                                 <p className="font-black text-slate-900 text-base">{company.nome}</p>
-                                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Quitação Eletrônica</p>
+                         {/* Official Footer with Corporate Identity & Digital Authenticity */}
+                         <div 
+                             className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 p-6 border rounded-3xl avoid-break"
+                             style={{
+                                 backgroundColor: brand.tintBg,
+                                 borderColor: brand.borderColor,
+                                 WebkitPrintColorAdjust: 'exact',
+                                 printColorAdjust: 'exact'
+                             }}
+                         >
+                             <div className="flex items-center gap-4">
+                                 <div className="p-2 bg-white rounded-xl shadow-xs">
+                                     <img src={company.logoUrl} className="max-h-12 w-auto object-contain" alt="logo" />
+                                 </div>
+                                 <div>
+                                     <p className="font-black text-slate-900 text-sm">{company.nome}</p>
+                                     <p className="text-[11px] font-bold text-slate-500 mt-0.5">
+                                         {isMev ? 'CNPJ 18.494.398/0001-44 • meuescritoriovirtual.com.br' : 'Quitação Eletrônica Homologada'}
+                                     </p>
+                                 </div>
+                             </div>
+                             <div className="text-right border-t md:border-t-0 md:border-l border-slate-200/80 pt-3 md:pt-0 md:pl-6">
+                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Certificação Digital</p>
+                                 <p className="text-xs font-mono font-bold text-slate-700 mt-0.5">
+                                     AUTH-{brand.codePrefix}-{protocolNumber}-{new Date().getFullYear()}
+                                 </p>
                              </div>
                          </div>
-                         <p className="text-center text-[10px] text-slate-400 mt-4">{t('common.doc_generated')}</p>
+                         <p className="text-center text-[10px] text-slate-400 mt-2">{t('common.doc_generated')}</p>
                      </div>
                  )}
             </PreviewCard>

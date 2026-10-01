@@ -13,6 +13,7 @@ export const translations = {
             cnpj: 'Consulta CNPJ',
             enderecos: 'Unidades',
             usuarios: 'Gestão de Usuários',
+            apresentacao: 'Apresentações',
             workspace: 'Área de Trabalho'
         },
         dashboard: {
@@ -47,7 +48,9 @@ export const translations = {
                 enderecos_label: 'Unidades',
                 enderecos_desc: 'Nossos endereços e unidades',
                 usuarios_label: 'Gestão de Usuários',
-                usuarios_desc: 'Acessos, contas e permissões da equipe'
+                usuarios_desc: 'Acessos, contas e permissões da equipe',
+                apresentacao_label: 'Apresentações Executivas',
+                apresentacao_desc: 'Gerador e visualizador de slides no padrão corporativo JSON'
             }
         },
         common: {
@@ -255,6 +258,7 @@ export const translations = {
             cnpj: 'CNPJ Lookup',
             enderecos: 'Locations',
             usuarios: 'User Management',
+            apresentacao: 'Presentations',
             workspace: 'Workspace'
         },
         dashboard: {
@@ -289,7 +293,9 @@ export const translations = {
                 enderecos_label: 'Locations',
                 enderecos_desc: 'Our addresses and units',
                 usuarios_label: 'User Management',
-                usuarios_desc: 'Team access, accounts and permissions'
+                usuarios_desc: 'Team access, accounts and permissions',
+                apresentacao_label: 'Executive Presentations',
+                apresentacao_desc: 'Slide generator and deck viewer in corporate JSON format'
             }
         },
         common: {
@@ -497,6 +503,7 @@ export const translations = {
             cnpj: 'Consulta CNPJ',
             enderecos: 'Unidades',
             usuarios: 'Gestión de Usuarios',
+            apresentacao: 'Presentaciones',
             workspace: 'Espacio de Trabajo'
         },
         dashboard: {
@@ -531,7 +538,9 @@ export const translations = {
                 enderecos_label: 'Unidades',
                 enderecos_desc: 'Nuestras direcciones y unidades',
                 usuarios_label: 'Gestión de Usuarios',
-                usuarios_desc: 'Accesos, cuentas y permisos del equipo'
+                usuarios_desc: 'Accesos, cuentas y permisos del equipo',
+                apresentacao_label: 'Presentaciones Ejecutivas',
+                apresentacao_desc: 'Generador y visualizador de diapositivas en formato padrão JSON'
             }
         },
         common: {

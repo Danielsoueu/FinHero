@@ -10,11 +10,30 @@ export interface Currency {
     decimals: number;
 }
 
+export interface CompanyBrand {
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+    darkColor: string;
+    lightColor: string;
+    tintBg: string;
+    borderColor: string;
+    badgeBg: string;
+    badgeText: string;
+    codePrefix: string;
+    tagline: string;
+    corporateName: string;
+    websiteUrl: string;
+    gradientTotal: string;
+    sealText: string;
+}
+
 export interface Company {
     id: 'empresaA' | 'empresaB';
     nome: string;
     logoUrl: string;
     cnpj?: string;
+    brand?: CompanyBrand;
 }
 
 export interface DebtItem {
@@ -56,7 +75,8 @@ export enum TabId {
     CUPONS = 'cupons',
     CNPJ = 'cnpj',
     ENDERECOS = 'enderecos',
-    USUARIOS = 'usuarios'
+    USUARIOS = 'usuarios',
+    APRESENTACAO = 'apresentacao'
 }
 
 export interface CancellationItem {

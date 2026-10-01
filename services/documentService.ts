@@ -67,6 +67,14 @@ export const printElement = (elementId: string, title: string = 'Documento') => 
                                     light: '#F3F3F3',
                                     slate: '#1E293B',
                                     hero: '#FF0066'
+                                },
+                                mev: {
+                                    blue: '#0A20FF',
+                                    dark: '#1E293B',
+                                    azure: '#046BD2',
+                                    tint: '#F0F5FA',
+                                    border: '#DCE7F5',
+                                    badge: '#EBF1FF'
                                 }
                             }
                         }
