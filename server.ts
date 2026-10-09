@@ -3,6 +3,7 @@ import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
+import { buscarCnpjComFallback } from './services/cnpjService';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -152,87 +153,22 @@ Sua resposta DEVE ser estritamente um JSON válido conforme esta estrutura:
     }
   });
 
-  // Proxy endpoint for CNPJ to avoid CORS/Network issues in the browser
+  // Endpoint para CNPJ com busca prioritária na BrasilAPI e fallback para CNPJá
   app.get('/api/cnpj', async (req, res) => {
     const cnpj = req.query.cnpj as string;
     if (!cnpj) return res.status(400).json({ error: 'CNPJ é obrigatório' });
 
-    console.log(`[CNPJ Search] Requesting data for: ${cnpj}`);
+    console.log(`[CNPJ Search] Buscando dados para: ${cnpj} (BrasilAPI -> CNPJá fallback)`);
     
     try {
-      let response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`, {
-        headers: {
-          'User-Agent': 'FinHero-App/1.0',
-          'Accept': 'application/json'
-        }
-      });
-
-      console.log(`[CNPJ Search] v1 API returned status: ${response.status}`);
-
-      // Try v2 if v1 fails with 404
-      if (response.status === 404) {
-        console.log(`[CNPJ Search] v1 failed, trying v2 for: ${cnpj}`);
-        response = await fetch(`https://brasilapi.com.br/api/cnpj/v2/${cnpj}`, {
-          headers: {
-            'User-Agent': 'FinHero-App/1.0',
-            'Accept': 'application/json'
-          }
-        });
-        console.log(`[CNPJ Search] v2 API returned status: ${response.status}`);
-      }
-
-      // fallback 3: Minha Receita
-      if (response.status === 404) {
-        console.log(`[CNPJ Search] v1 and v2 failed, trying Minha Receita for: ${cnpj}`);
-        response = await fetch(`https://minhareceita.org/${cnpj}`);
-        console.log(`[CNPJ Search] Minha Receita returned status: ${response.status}`);
-      }
-
-      // fallback 4: CNPJ.ws
-      if (response.status === 404) {
-        console.log(`[CNPJ Search] Trying CNPJ.ws for: ${cnpj}`);
-        response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpj}`);
-        console.log(`[CNPJ Search] CNPJ.ws returned status: ${response.status}`);
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => "");
-        let errorMessage = 'Erro na comunicação com o serviço de dados.';
-        
-        try {
-          const errorJson = JSON.parse(errorText);
-          errorMessage = errorJson.message || errorJson.error || errorMessage;
-        } catch (e) { }
-
-        console.error(`[CNPJ Search] API Error Body:`, errorText);
-        return res.status(response.status).json({ 
-          error: response.status === 404 ? 'CNPJ não encontrado em nenhuma das bases consultadas.' : errorMessage
-        });
-      }
-
-      const data = await response.json();
-      
-      // Normalization logic for different APIs
-      const normalizedData = {
-        razao_social: data.razao_social || data.nome_fantasia || "",
-        nome_fantasia: data.nome_fantasia || data.razao_social || "",
-        porte: data.porte || data.porte_descricao || "",
-        descricao_situacao_cadastral: data.descricao_situacao_cadastral || data.situacao_cadastral_descricao || (data.estabelecimento ? data.estabelecimento.situacao_cadastral : ""),
-        logradouro: data.logradouro || (data.estabelecimento ? data.estabelecimento.logradouro : ""),
-        numero: data.numero || (data.estabelecimento ? data.estabelecimento.numero : ""),
-        complemento: data.complemento || (data.estabelecimento ? data.estabelecimento.complemento : ""),
-        bairro: data.bairro || (data.estabelecimento ? data.estabelecimento.bairro : ""),
-        municipio: data.municipio || (data.estabelecimento ? data.estabelecimento.municipio.nome : ""),
-        uf: data.uf || (data.estabelecimento ? data.estabelecimento.estado.sigla : ""),
-        cep: data.cep || (data.estabelecimento ? data.estabelecimento.cep : ""),
-        ddd_telefone_1: data.ddd_telefone_1 || (data.estabelecimento ? (data.estabelecimento.ddd1 + data.estabelecimento.telefone1) : ""),
-        email: data.email || (data.estabelecimento ? data.estabelecimento.email : "")
-      };
-
-      res.json(normalizedData);
+      const empresa = await buscarCnpjComFallback(cnpj);
+      console.log(`[CNPJ Search] Sucesso obtido via: ${empresa.origem}`);
+      res.json(empresa);
     } catch (error: any) {
-      console.error('[CNPJ Search] Proxy Exception:', error.message);
-      res.status(500).json({ error: 'Erro interno ao processar a consulta.' });
+      console.error('[CNPJ Search] Erro na consulta:', error.message);
+      res.status(404).json({ 
+        error: error.message || 'Não foi possível localizar o CNPJ em nenhum dos provedores.' 
+      });
     }
   });
 

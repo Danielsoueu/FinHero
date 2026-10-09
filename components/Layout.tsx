@@ -100,7 +100,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
         { id: TabId.CUPONS, label: t('sidebar.cupons'), icon: <Icons.Cupons /> },
         { id: TabId.CNPJ, label: t('sidebar.cnpj'), icon: <Icons.Cnpj /> },
         { id: TabId.ENDERECOS, label: t('sidebar.enderecos'), icon: <Icons.Enderecos /> },
-        { id: TabId.APRESENTACAO, label: t('sidebar.apresentacao'), icon: <Icons.Presentation /> },
         ...(isAdmin ? [{ id: TabId.USUARIOS, label: t('sidebar.usuarios'), icon: <Icons.Users /> }] : []),
     ];
 

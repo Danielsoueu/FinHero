@@ -31,7 +31,6 @@ const InterestCalculator: React.FC = () => {
     const [clientName, setClientName] = useState('');
     const [items, setItems] = useState<DebtItem[]>([]);
     const [showResult, setShowResult] = useState(false);
-    const [protocolNumber] = useState(() => Math.floor(Math.random() * 9000) + 1000);
 
     const brand = getCompanyBrand(company);
     const isMev = isMevCompany(company);
@@ -359,9 +358,6 @@ const InterestCalculator: React.FC = () => {
                             >
                                 {isMev ? 'DEMONSTRATIVO DE DÉBITO E ATUALIZAÇÃO FINANCEIRA' : 'Demonstrativo de Débito'}
                             </span>
-                            <p className="text-xs font-mono text-slate-400 font-bold mt-1">
-                                #{brand.codePrefix}-FIN-{protocolNumber}
-                            </p>
                         </div>
 
                         {/* Client & Date Information */}

@@ -7,6 +7,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { units } from '../constants/units';
+import { buscarCnpjComFallback, EmpresaPadronizada } from '../services/cnpjService';
 
 interface CnpjData {
     razao_social: string;
@@ -22,6 +23,7 @@ interface CnpjData {
     cep: string;
     ddd_telefone_1: string;
     email: string;
+    origem?: 'brasilapi' | 'cnpja';
 }
 
 interface BatchItem {
@@ -205,14 +207,38 @@ const CnpjLookup: React.FC = () => {
         setData(null);
 
         try {
-            const response = await fetch(`/api/cnpj?cnpj=${cnpjLimpo}`);
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || t('cnpj.error_not_found'));
+            let d: EmpresaPadronizada;
+            try {
+                // Tentativa principal: orquestrador dual (BrasilAPI -> CNPJá fallback)
+                d = await buscarCnpjComFallback(cnpjLimpo);
+            } catch {
+                // Fallback via endpoint proxy do servidor
+                const response = await fetch(`/api/cnpj?cnpj=${cnpjLimpo}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || t('cnpj.error_not_found'));
+                }
+                d = await response.json();
             }
 
-            const d = await response.json();
-            setData(d);
+            const normalizedData: CnpjData = {
+                razao_social: d.razaoSocial || d.razao_social || '',
+                nome_fantasia: d.nomeFantasia || d.nome_fantasia || '',
+                porte: d.porte || '',
+                descricao_situacao_cadastral: d.situacaoCadastral || d.descricao_situacao_cadastral || 'ATIVA',
+                logradouro: d.logradouro || '',
+                numero: d.numero || '',
+                complemento: d.complemento || '',
+                bairro: d.bairro || '',
+                municipio: d.municipio || '',
+                uf: d.uf || '',
+                cep: d.cep || '',
+                ddd_telefone_1: d.ddd_telefone_1 || '',
+                email: d.email || '',
+                origem: d.origem
+            };
+
+            setData(normalizedData);
             addToast('CNPJ localizado com sucesso!', 'success');
         } catch (err: any) {
             addToast(err.message || t('cnpj.error_generic'), 'error');
@@ -245,7 +271,7 @@ const CnpjLookup: React.FC = () => {
         return parseCnpjs(batchInput);
     }, [batchInput]);
 
-    // Executing Batch Lookup (Safe sequencial execution to prevent rate limit blocks)
+    // Executing Batch Lookup (Safe sequential execution with dual-provider fallback)
     const buscarCnpjsEmLote = async () => {
         const cnpjsToSearch = detectedCnpjs;
         if (cnpjsToSearch.length === 0) {
@@ -270,13 +296,35 @@ const CnpjLookup: React.FC = () => {
             const currentCnpj = trimmedList[i];
 
             try {
-                const response = await fetch(`/api/cnpj?cnpj=${currentCnpj}`);
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error || 'Não cadastrado ou não retornado pelas bases.');
+                let d: EmpresaPadronizada;
+                try {
+                    d = await buscarCnpjComFallback(currentCnpj);
+                } catch {
+                    const response = await fetch(`/api/cnpj?cnpj=${currentCnpj}`);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'Não cadastrado ou não retornado pelas bases.');
+                    }
+                    d = await response.json();
                 }
                 
-                const dataResult: CnpjData = await response.json();
+                const dataResult: CnpjData = {
+                    razao_social: d.razaoSocial || d.razao_social || '',
+                    nome_fantasia: d.nomeFantasia || d.nome_fantasia || '',
+                    porte: d.porte || '',
+                    descricao_situacao_cadastral: d.situacaoCadastral || d.descricao_situacao_cadastral || 'ATIVA',
+                    logradouro: d.logradouro || '',
+                    numero: d.numero || '',
+                    complemento: d.complemento || '',
+                    bairro: d.bairro || '',
+                    municipio: d.municipio || '',
+                    uf: d.uf || '',
+                    cep: d.cep || '',
+                    ddd_telefone_1: d.ddd_telefone_1 || '',
+                    email: d.email || '',
+                    origem: d.origem
+                };
+
                 const matchedUnit = checkIfOurUnit(dataResult);
 
                 setBatchResults(prev => prev.map(item => 
@@ -293,7 +341,7 @@ const CnpjLookup: React.FC = () => {
             }
 
             // Small progressive timeout to respect rate-limiting
-            await new Promise(resolve => setTimeout(resolve, 350));
+            await new Promise(resolve => setTimeout(resolve, 250));
         }
 
         setIsSearchingBatch(false);
