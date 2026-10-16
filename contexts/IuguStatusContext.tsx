@@ -112,13 +112,8 @@ export const IuguStatusProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       loadStatus();
     }, POLLING_INTERVAL_SEC * 1000);
 
-    const countdownId = setInterval(() => {
-      setNextCheckIn((prev) => (prev > 1 ? prev - 1 : POLLING_INTERVAL_SEC));
-    }, 1000);
-
     return () => {
       clearInterval(intervalId);
-      clearInterval(countdownId);
     };
   }, [loadStatus]);
 

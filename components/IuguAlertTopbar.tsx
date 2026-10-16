@@ -7,7 +7,6 @@ export const IuguAlertTopbar: React.FC = () => {
     isDegradedOrPending,
     effectiveDegradedName,
     pendingInvoice,
-    nextCheckIn,
     lastChecked,
     setOpenDetailsModal,
     hideGreenBadge,
@@ -112,7 +111,7 @@ export const IuguAlertTopbar: React.FC = () => {
         {/* Informações adicionais discretas e controles */}
         <div className="flex items-center gap-2 text-[10px] md:text-xs">
           <span className="hidden lg:inline-block text-emerald-600/70 dark:text-emerald-400/60">
-            {lastChecked ? `Checado às ${lastChecked.toLocaleTimeString('pt-BR')}` : 'Checando...'} (próxima em {nextCheckIn}s)
+            {lastChecked ? `Atualizado às ${lastChecked.toLocaleTimeString('pt-BR')}` : 'Verificando...'}
           </span>
 
           <button

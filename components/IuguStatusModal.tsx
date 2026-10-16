@@ -10,8 +10,7 @@ export const IuguStatusModal: React.FC = () => {
     setOpenDetailsModal,
     refreshStatus,
     isLoading,
-    lastChecked,
-    nextCheckIn
+    lastChecked
   } = useIuguStatus();
 
   if (!openDetailsModal) return null;
@@ -118,8 +117,7 @@ export const IuguStatusModal: React.FC = () => {
             Última checagem:{' '}
             <strong className="text-slate-700 dark:text-slate-300">
               {lastChecked ? lastChecked.toLocaleTimeString('pt-BR') : 'Carregando...'}
-            </strong>{' '}
-            (próxima em {nextCheckIn}s)
+            </strong>
           </div>
           <button
             onClick={() => setOpenDetailsModal(false)}
