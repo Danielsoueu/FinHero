@@ -6,6 +6,7 @@ import CurrencyInput from '../components/CurrencyInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { useIuguStatus } from '../contexts/IuguStatusContext';
 import { getCompanyBrand, isMevCompany } from '../utils/branding';
 
 const PaymentReceipt: React.FC = () => {
@@ -19,6 +20,7 @@ const PaymentReceipt: React.FC = () => {
     const [items, setItems] = useState<ReceiptItem[]>([]);
     const [showResult, setShowResult] = useState(false);
     const [protocolNumber] = useState(() => Math.floor(Math.random() * 9000) + 1000);
+    const { setPendingInvoice } = useIuguStatus();
 
     const brand = getCompanyBrand(company);
     const isMev = isMevCompany(company);
@@ -198,7 +200,14 @@ const PaymentReceipt: React.FC = () => {
                     
                     <div className="flex gap-4 pt-2">
                         <button 
-                            onClick={() => setShowResult(true)} 
+                            onClick={() => {
+                                setShowResult(true);
+                                setPendingInvoice(prev => ({
+                                    ...prev,
+                                    number: protocolNumber.toString(),
+                                    client: client || prev.client
+                                }));
+                            }} 
                             className={`flex-1 py-4 text-white rounded-2xl font-bold transition shadow-lg ${
                                 isMev 
                                     ? 'bg-[#0A20FF] hover:bg-[#033ECD] shadow-blue-500/25' 

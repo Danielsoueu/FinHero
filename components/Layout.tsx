@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
+import { IuguAlertTopbar } from './IuguAlertTopbar';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -104,11 +105,15 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
     ];
 
     return (
-        <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans transition-colors duration-300">
-            <LoginModal />
+        <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans transition-colors duration-300">
+            {/* Topbar Fixa com alerta de status iugu e badge de fatura */}
+            <IuguAlertTopbar />
 
-            {/* Desktop Sidebar */}
-            <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-shrink-0 hidden md:flex flex-col relative z-20">
+            <div className="flex flex-1 overflow-hidden relative">
+                <LoginModal />
+
+                {/* Desktop Sidebar */}
+                <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-shrink-0 hidden md:flex flex-col relative z-20">
                 <div className="p-6 pb-4 flex flex-col gap-5">
                     <div className="flex items-center gap-2 group cursor-pointer" onClick={() => onTabChange(TabId.HOME)}>
                         <div className="h-8 w-1.5 bg-brand-pink rounded-full transition-hero group-hover:scale-y-110"></div>
@@ -191,7 +196,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
             </aside>
 
             {/* Content */}
-            <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                 <header className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 md:hidden px-4 py-3 flex items-center justify-between shrink-0 z-30 sticky top-0">
                     <div className="flex items-center gap-2" onClick={() => onTabChange(TabId.HOME)}>
                          <div className="h-6 w-1 bg-brand-pink rounded-full"></div>
@@ -228,6 +233,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                         {children}
                     </div>
                 </main>
+            </div>
             </div>
         </div>
     );

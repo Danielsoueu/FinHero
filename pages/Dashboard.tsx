@@ -17,7 +17,6 @@ import { TabId } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import Clock from '../components/Clock';
-import IuguStatus from '../components/IuguStatus';
 
 interface DashboardProps {
     onNavigate: (tab: TabId) => void;
@@ -106,7 +105,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <IuguStatus />
                     <Clock />
                 </div>
             </div>

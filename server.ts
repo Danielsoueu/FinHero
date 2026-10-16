@@ -172,6 +172,35 @@ Sua resposta DEVE ser estritamente um JSON válido conforme esta estrutura:
     }
   });
 
+  // Endpoint para proxy do status da iugu com timeout e fallback
+  app.get('/api/iugu-status', async (_req, res) => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const response = await fetch('https://status.iugu.com/api/v2/summary.json', {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'FinHero-StatusMonitor/1.0',
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`iugu status HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      console.error('[iugu Status Proxy Error]:', error.message);
+      res.status(502).json({
+        error: 'Falha ao consultar status da iugu',
+        details: error.message,
+      });
+    }
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },

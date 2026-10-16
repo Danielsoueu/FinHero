@@ -5,6 +5,7 @@ import { CurrencyProvider } from './contexts/CurrencyContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { IuguStatusProvider } from './contexts/IuguStatusContext';
 import Layout from './components/Layout';
 import LoginScreen from './components/LoginScreen';
 import Dashboard from './pages/Dashboard';
@@ -76,7 +77,9 @@ const App: React.FC = () => {
                 <ToastProvider>
                     <ThemeProvider>
                         <AuthProvider>
-                            <AppContent />
+                            <IuguStatusProvider>
+                                <AppContent />
+                            </IuguStatusProvider>
                         </AuthProvider>
                     </ThemeProvider>
                 </ToastProvider>
