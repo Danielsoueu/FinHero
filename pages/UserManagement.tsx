@@ -85,10 +85,27 @@ const UserManagement: React.FC = () => {
 
         setSavingSettings(true);
         try {
-            const formattedDomain = domainInput.trim().toLowerCase().replace(/^@/, '');
+            const rawDomains = domainInput
+                .split(/[,;\s]+/)
+                .map(d => d.trim().toLowerCase().replace(/^@/, ''))
+                .filter(Boolean);
+
+            const finalDomains = Array.from(new Set([
+                'companyhero.com',
+                'meuescritoriovirtual.com',
+                'meuescritoriovirtual.com.br',
+                ...rawDomains
+            ]));
+
+            const finalEmails = Array.from(new Set([
+                'financeiro@meuescritoriovirtual.com',
+                ...allowedEmailsList.map(e => e.trim().toLowerCase())
+            ]));
+
             await updateWorkspaceSettings({
-                allowedDomain: formattedDomain,
-                allowedEmails: allowedEmailsList,
+                allowedDomain: finalDomains.join(', '),
+                allowedDomains: finalDomains,
+                allowedEmails: finalEmails,
                 domainRestrictionEnabled: restrictionEnabled
             });
             addToast('Configurações de acesso salvas com sucesso!', 'success');
@@ -197,12 +214,12 @@ const UserManagement: React.FC = () => {
                         <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${isAdmin ? 'bg-brand-pink/10 text-brand-pink border border-brand-pink/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>
                             {isAdmin ? 'Visão de Administrador' : 'Visão de Usuário'}
                         </span>
-                        {workspaceSettings.domainRestrictionEnabled && workspaceSettings.allowedDomain && (
+                        {workspaceSettings.domainRestrictionEnabled && (
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 flex items-center gap-1.5">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
-                                Domínio Restrito: @{workspaceSettings.allowedDomain}
+                                Domínios Autorizados: @companyhero.com, @meuescritoriovirtual.com
                             </span>
                         )}
                     </div>
@@ -310,21 +327,38 @@ const UserManagement: React.FC = () => {
 
                         {restrictionEnabled && (
                             <div className="space-y-5 animate-fade-in pl-1">
-                                {/* Corporate Domain Input */}
+                                {/* Corporate Domains Section */}
                                 <div>
                                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider">
-                                        Domínio Corporativo Principal (@):
+                                        Domínios Corporativos Autorizados:
                                     </label>
+                                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-bold">
+                                            <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            @companyhero.com (Padrão)
+                                        </span>
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-bold">
+                                            <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            @meuescritoriovirtual.com (Liberado)
+                                        </span>
+                                    </div>
                                     <div className="relative">
                                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">@</span>
                                         <input
                                             type="text"
                                             value={domainInput}
                                             onChange={(e) => setDomainInput(e.target.value)}
-                                            placeholder="companyhero.com"
+                                            placeholder="meuescritoriovirtual.com, companyhero.com"
                                             className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-pink transition-colors"
                                         />
                                     </div>
+                                    <p className="text-[11px] text-slate-400 mt-1.5">
+                                        Usuários com e-mail corporativo <strong>@meuescritoriovirtual.com</strong> ou <strong>@companyhero.com</strong> têm acesso garantido. Você pode adicionar domínios extras separados por vírgula.
+                                    </p>
                                 </div>
 
                                 {/* Whitelisted Full Emails Section */}
@@ -355,30 +389,35 @@ const UserManagement: React.FC = () => {
                                     </div>
 
                                     {/* List of Allowed Emails Chips */}
-                                    {allowedEmailsList.length > 0 ? (
-                                        <div className="mt-3 flex flex-wrap gap-2">
-                                            {allowedEmailsList.map((email) => (
-                                                <span
-                                                    key={email}
-                                                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-pink/10 text-brand-pink border border-brand-pink/20 text-xs font-bold"
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        <span
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-bold"
+                                        >
+                                            <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <span>financeiro@meuescritoriovirtual.com</span>
+                                            <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200/60 dark:bg-emerald-800/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">
+                                                Financeiro MEV
+                                            </span>
+                                        </span>
+                                        {allowedEmailsList.filter(e => e.toLowerCase() !== 'financeiro@meuescritoriovirtual.com').map((email) => (
+                                            <span
+                                                key={email}
+                                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-pink/10 text-brand-pink border border-brand-pink/20 text-xs font-bold"
+                                            >
+                                                <span>{email}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveEmail(email)}
+                                                    className="hover:text-red-600 transition-colors focus:outline-none"
+                                                    title="Remover autorização deste e-mail"
                                                 >
-                                                    <span>{email}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveEmail(email)}
-                                                        className="hover:text-red-600 transition-colors focus:outline-none"
-                                                        title="Remover autorização deste e-mail"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </span>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-[11px] text-slate-400 italic mt-2">
-                                            Nenhum e-mail individual cadastrado até o momento.
-                                        </p>
-                                    )}
+                                                    ✕
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}

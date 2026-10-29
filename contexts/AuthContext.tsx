@@ -37,7 +37,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
     const [workspaceSettings, setWorkspaceSettings] = useState<WorkspaceSettings>({
         domainRestrictionEnabled: false,
-        allowedDomain: ''
+        allowedDomain: 'companyhero.com, meuescritoriovirtual.com',
+        allowedDomains: ['companyhero.com', 'meuescritoriovirtual.com', 'meuescritoriovirtual.com.br'],
+        allowedEmails: ['financeiro@meuescritoriovirtual.com'],
+        updatedAt: new Date().toISOString()
     });
 
     // Listen to Workspace Settings
@@ -45,7 +48,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const settingsRef = doc(db, 'settings', 'workspace');
         const unsubscribe = onSnapshot(settingsRef, (snapshot) => {
             if (snapshot.exists()) {
-                setWorkspaceSettings(snapshot.data() as WorkspaceSettings);
+                const data = snapshot.data() as WorkspaceSettings;
+                setWorkspaceSettings({
+                    ...data,
+                    allowedDomains: Array.from(new Set([
+                        'companyhero.com',
+                        'meuescritoriovirtual.com',
+                        'meuescritoriovirtual.com.br',
+                        ...(data.allowedDomains || []),
+                        ...(data.allowedDomain ? data.allowedDomain.split(/[,;\s]+/).map(d => d.replace(/^@/, '').trim()) : [])
+                    ])).filter(Boolean),
+                    allowedEmails: Array.from(new Set([
+                        'financeiro@meuescritoriovirtual.com',
+                        ...(data.allowedEmails || []).map(e => e.trim().toLowerCase())
+                    ])).filter(Boolean)
+                });
             }
         }, (error) => {
             console.warn("Sem acesso inicial ou erro nas configurações da workspace:", error);
@@ -70,6 +87,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 const userRef = doc(db, 'users', user.uid);
                 
                 unsubscribeProfile = onSnapshot(userRef, async (docSnap) => {
+                    const normalizedEmail = (user.email || '').toLowerCase().trim();
+                    const isOwnerAccount = normalizedEmail === 'danielcontaescolar@gmail.com' || normalizedEmail === 'financeiro@meuescritoriovirtual.com';
+
                     if (docSnap.exists()) {
                         const profileData = docSnap.data() as UserProfile;
                         if (profileData.status === 'blocked') {
@@ -77,14 +97,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                             setUserProfile(null);
                             if (typeof window !== 'undefined') localStorage.removeItem('finhero_user_profile');
                         } else {
-                            setUserProfile(profileData);
+                            // Ensure owner accounts maintain admin status
+                            const effectiveProfile: UserProfile = {
+                                ...profileData,
+                                role: isOwnerAccount ? 'admin' : profileData.role
+                            };
+                            setUserProfile(effectiveProfile);
                             if (typeof window !== 'undefined') {
-                                localStorage.setItem('finhero_user_profile', JSON.stringify(profileData));
+                                localStorage.setItem('finhero_user_profile', JSON.stringify(effectiveProfile));
                             }
                         }
                     } else {
                         // Profile missing in Firestore for authenticated user: auto-create active profile
-                        const isOwnerAccount = user.email?.toLowerCase() === 'danielcontaescolar@gmail.com';
                         const fallbackProfile: UserProfile = {
                             uid: user.uid,
                             email: user.email || '',
@@ -113,12 +137,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                     console.error("Erro ao carregar perfil do usuário:", error);
                     // On Firestore error, keep existing userProfile if present or create fallback from auth user
                     if (user && !userProfile) {
+                        const normalizedEmail = (user.email || '').toLowerCase().trim();
+                        const isOwnerAccount = normalizedEmail === 'danielcontaescolar@gmail.com' || normalizedEmail === 'financeiro@meuescritoriovirtual.com';
                         const fallbackProfile: UserProfile = {
                             uid: user.uid,
                             email: user.email || '',
                             displayName: user.displayName || user.email?.split('@')[0] || 'Usuário',
                             photoURL: user.photoURL || undefined,
-                            role: user.email?.toLowerCase() === 'danielcontaescolar@gmail.com' ? 'admin' : 'user',
+                            role: isOwnerAccount ? 'admin' : 'user',
                             status: 'active',
                             createdAt: new Date().toISOString(),
                             lastLoginAt: new Date().toISOString(),

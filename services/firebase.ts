@@ -35,6 +35,7 @@ export interface UserProfile {
 
 export interface WorkspaceSettings {
     allowedDomain?: string;
+    allowedDomains?: string[];
     allowedEmails?: string[];
     domainRestrictionEnabled: boolean;
     updatedAt: string;
@@ -56,7 +57,37 @@ export const signInWithGoogle = async () => {
             settings = settingsSnap.data() as WorkspaceSettings;
         }
 
-        const userDomain = user.email ? user.email.split('@')[1] : '';
+        const userDomain = (user.email ? user.email.split('@')[1] : '').toLowerCase().trim();
+        const userEmailNormalized = (user.email || '').toLowerCase().trim();
+
+        // Whitelisted default domains and specific emails permitted across the platform
+        const defaultAllowedEmails = [
+            'financeiro@meuescritoriovirtual.com',
+            'danielcontaescolar@gmail.com'
+        ];
+        const defaultAllowedDomains = [
+            'companyhero.com',
+            'meuescritoriovirtual.com',
+            'meuescritoriovirtual.com.br'
+        ];
+
+        // Gather configured allowed domains (array or comma/semicolon/space-separated string)
+        const customAllowedDomains: string[] = [
+            ...(Array.isArray(settings.allowedDomains) ? settings.allowedDomains : []),
+            ...(settings.allowedDomain ? settings.allowedDomain.split(/[,;\s]+/) : [])
+        ].map(d => d.replace(/^@/, '').toLowerCase().trim()).filter(Boolean);
+
+        const allAllowedDomains = Array.from(new Set([...defaultAllowedDomains, ...customAllowedDomains]));
+
+        // Gather all allowed emails
+        const allAllowedEmails = Array.from(new Set([
+            ...defaultAllowedEmails,
+            ...(settings.allowedEmails || []).map(e => e.toLowerCase().trim())
+        ]));
+
+        // Check if user matches whitelist
+        const isWhitelistedEmail = allAllowedEmails.includes(userEmailNormalized);
+        const isWhitelistedDomain = allAllowedDomains.includes(userDomain);
 
         // Sync or check user profile in Firestore
         const userRef = doc(db, 'users', user.uid);
@@ -67,20 +98,14 @@ export const signInWithGoogle = async () => {
         const isFirstUser = usersSnap.empty;
 
         // Determine if current user is an admin or owner account (exempt from domain restrictions)
-        const isOwnerAccount = user.email?.toLowerCase() === 'danielcontaescolar@gmail.com';
+        const isOwnerAccount = userEmailNormalized === 'danielcontaescolar@gmail.com';
         const isAdminUser = (existingProfile?.role === 'admin') || isFirstUser || isOwnerAccount;
 
-        // Check if user email is explicitly whitelisted in settings
-        const userEmailNormalized = (user.email || '').toLowerCase().trim();
-        const isWhitelistedEmail = (settings.allowedEmails || []).some(e => e.toLowerCase().trim() === userEmailNormalized);
-
-        // Check if domain restriction is active (administrators, owner, and whitelisted emails bypass domain restriction)
-        if (settings.domainRestrictionEnabled && settings.allowedDomain && !isAdminUser && !isWhitelistedEmail) {
-            const allowed = settings.allowedDomain.toLowerCase().trim();
-            if (userDomain.toLowerCase() !== allowed) {
-                await firebaseSignOut(auth);
-                throw new Error(`Acesso restrito ao domínio corporativo (@${settings.allowedDomain}) ou e-mails autorizados.`);
-            }
+        // Check if domain restriction is active (administrators, owner, whitelisted domains, and whitelisted emails pass)
+        if (settings.domainRestrictionEnabled && !isAdminUser && !isWhitelistedEmail && !isWhitelistedDomain) {
+            await firebaseSignOut(auth);
+            const domainDisplay = allAllowedDomains.map(d => `@${d}`).join(', ');
+            throw new Error(`Acesso restrito aos domínios corporativos (${domainDisplay}) ou e-mails autorizados (ex: financeiro@meuescritoriovirtual.com).`);
         }
 
         const now = new Date().toISOString();
